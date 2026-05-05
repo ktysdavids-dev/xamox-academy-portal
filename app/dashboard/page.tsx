@@ -1,7 +1,46 @@
+import { auth } from "@/auth";
 import { CourseCard } from "@/components/course-card";
-import { DEMO_COURSES } from "@/lib/demo-courses";
+import { prisma } from "@/lib/prisma";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth();
+  const userId = session!.user.id;
+
+  const enrollments = await prisma.enrollment.findMany({
+    where: { userId },
+    include: {
+      course: {
+        include: {
+          modules: {
+            include: { lessons: true },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const cards = enrollments.map((e) => {
+    const totalLessons = e.course.modules.reduce(
+      (acc, m) => acc + m.lessons.length,
+      0
+    );
+    const done = 0;
+    const progress =
+      totalLessons > 0 ? Math.round((done / totalLessons) * 100) : 0;
+
+    return {
+      slug: e.course.slug,
+      title: e.course.title,
+      description:
+        e.course.description ??
+        "Contenido disponible en el campus — sigue las sesiones desde aquí.",
+      progress,
+      lessonsTotal: totalLessons || 8,
+      lessonsDone: done,
+    };
+  });
+
   return (
     <div id="contenido-principal">
       <div className="mb-12">
@@ -12,8 +51,8 @@ export default function DashboardPage() {
           Hola de nuevo
         </h1>
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-xa-ink-soft">
-          Aquí tienes tus programas activos. El progreso real lo conectarás con tu base
-          de datos o con la herramienta con la que gestiones matrículas.
+          Aquí tienes tus programas matriculados. El contenido lo gestionas desde el
+          panel de administración.
         </p>
       </div>
 
@@ -24,11 +63,21 @@ export default function DashboardPage() {
         >
           Mis cursos
         </h2>
-        <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
-          {DEMO_COURSES.map((course) => (
-            <CourseCard key={course.id} course={course} />
-          ))}
-        </div>
+        {cards.length === 0 ? (
+          <div className="rounded-3xl border border-xa-line bg-xa-night/80 p-10 text-center text-xa-ink-soft">
+            <p>Aún no tienes cursos activos.</p>
+            <p className="mt-2 text-sm text-xa-ink-dim">
+              Cuando completes el pago en la web, podrás entrar desde el enlace de
+              Stripe o iniciando sesión aquí.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+            {cards.map((c) => (
+              <CourseCard key={c.slug} course={c} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

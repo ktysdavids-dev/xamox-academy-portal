@@ -1,5 +1,11 @@
-# Blueprint para Render: https://render.com/docs/blueprint-spec
-# Tras subir el repo a GitHub: New → Blueprint → conecta el repo y despliega.
+# Blueprint Render: Postgres + Web + migraciones Prisma al desplegar.
+# https://render.com/docs/blueprint-spec
+
+databases:
+  - name: xamox-db
+    databaseName: xamox
+    user: xamox
+    plan: free
 
 services:
   - type: web
@@ -8,11 +14,27 @@ services:
     plan: free
     region: frankfurt
     buildCommand: npm ci && npm run build
+    preDeployCommand: npx prisma migrate deploy
     startCommand: npm start
     healthCheckPath: /
     envVars:
       - key: NODE_VERSION
         value: "20.18.0"
-      # URL canónica del portal (SEO y metadata). Cámbiala si usas otra ruta.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: xamox-db
+          property: connectionString
       - key: NEXT_PUBLIC_SITE_URL
         value: https://app.xamoxacademy.com
+      - key: NEXTAUTH_URL
+        value: https://app.xamoxacademy.com
+      - key: NEXTAUTH_SECRET
+        sync: false
+      - key: ADMIN_EMAILS
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: BLOB_READ_WRITE_TOKEN
+        sync: false

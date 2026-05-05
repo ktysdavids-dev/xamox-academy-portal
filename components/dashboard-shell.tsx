@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
+import { SignOutButton } from "@/components/sign-out-button";
 import { MARKETING_SITE_URL, PORTAL_DISPLAY_NAME } from "@/lib/constants";
 
 const nav = [
@@ -7,7 +8,13 @@ const nav = [
   { href: "/dashboard#cursos", label: "Mis cursos" },
 ];
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+export function DashboardShell({
+  children,
+  isAdmin,
+}: {
+  children: React.ReactNode;
+  isAdmin: boolean;
+}) {
   return (
     <div className="xa-content min-h-screen bg-xa-deep">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-xa-line bg-xa-deeper/95 backdrop-blur-xl lg:flex">
@@ -24,6 +31,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               {item.label}
             </Link>
           ))}
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="rounded-xl px-3 py-2.5 text-sm font-semibold text-xa-gold transition hover:bg-xa-night"
+            >
+              Administración
+            </Link>
+          )}
           <Link
             href={MARKETING_SITE_URL}
             className="mt-auto rounded-xl px-3 py-2.5 text-sm text-xa-ink-dim transition hover:text-xa-cyan"
@@ -41,13 +56,16 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           <p className="hidden font-mono text-xs uppercase tracking-[0.2em] text-xa-ink-dim lg:block">
             {PORTAL_DISPLAY_NAME}
           </p>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="text-sm font-medium text-xa-ink-soft transition hover:text-xa-gold"
-            >
-              Cerrar sesión
-            </Link>
+          <div className="flex items-center gap-4">
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="hidden text-sm font-medium text-xa-gold lg:inline"
+              >
+                Admin
+              </Link>
+            )}
+            <SignOutButton />
           </div>
         </header>
         <main className="p-4 lg:p-10">{children}</main>

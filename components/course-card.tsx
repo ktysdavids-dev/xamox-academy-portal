@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export type CourseSummary = {
-  id: string;
+  slug: string;
   title: string;
   description: string;
   progress: number;
@@ -27,7 +27,7 @@ export function CourseCard({ course }: { course: CourseSummary }) {
         <div className="mb-1.5 flex justify-between font-mono text-xs text-xa-ink-dim">
           <span>Progreso</span>
           <span>
-            {course.lessonsDone}/{course.lessonsTotal} sesiones
+            {course.lessonsDone}/{course.lessonsTotal} lecciones
           </span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-xa-deep ring-1 ring-xa-line">
@@ -38,10 +38,10 @@ export function CourseCard({ course }: { course: CourseSummary }) {
         </div>
       </div>
       <Link
-        href={`/dashboard/cursos/${course.id}`}
+        href={`/dashboard/cursos/${course.slug}`}
         className="inline-flex items-center justify-center rounded-full bg-xa-gold px-4 py-2.5 text-sm font-semibold text-xa-deep shadow-md transition hover:bg-xa-gold-bright focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-xa-cyan"
       >
-        Continuar
+        Entrar al programa
       </Link>
     </article>
   );

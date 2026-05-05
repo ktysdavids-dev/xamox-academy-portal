@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/app/providers";
 import { PORTAL_DISPLAY_NAME } from "@/lib/constants";
 
 const interTight = Inter_Tight({
@@ -64,7 +65,7 @@ export default function RootLayout({
         >
           Saltar al contenido
         </a>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
