@@ -9,24 +9,24 @@ const nav = [
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-surface-muted">
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-border-subtle bg-surface lg:flex">
-        <div className="flex h-16 items-center border-b border-border-subtle px-6">
-          <Logo />
+    <div className="xa-content min-h-screen bg-xa-deep">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-xa-line bg-xa-deeper/95 backdrop-blur-xl lg:flex">
+        <div className="flex h-[72px] items-center border-b border-xa-line px-5">
+          <Logo href="/dashboard" />
         </div>
         <nav className="flex flex-1 flex-col gap-1 p-4">
           {nav.map((item) => (
             <Link
               key={item.href + item.label}
               href={item.href}
-              className="rounded-xl px-3 py-2 text-sm font-medium text-foreground transition hover:bg-surface-muted"
+              className="rounded-xl px-3 py-2.5 text-sm font-medium text-xa-ink-soft transition hover:bg-xa-night hover:text-xa-gold"
             >
               {item.label}
             </Link>
           ))}
           <Link
             href={MARKETING_SITE_URL}
-            className="mt-auto rounded-xl px-3 py-2 text-sm text-muted transition hover:bg-surface-muted"
+            className="mt-auto rounded-xl px-3 py-2.5 text-sm text-xa-ink-dim transition hover:text-xa-cyan"
           >
             Web de la academia
           </Link>
@@ -34,23 +34,23 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border-subtle bg-surface/90 px-4 backdrop-blur-md lg:px-8">
+        <header className="sticky top-0 z-30 flex h-[72px] items-center justify-between border-b border-xa-line bg-xa-deep/85 px-4 backdrop-blur-xl lg:px-8">
           <div className="flex items-center gap-3 lg:hidden">
-            <Logo />
+            <Logo href="/dashboard" />
           </div>
-          <p className="hidden text-sm text-muted lg:block">
+          <p className="hidden font-mono text-xs uppercase tracking-[0.2em] text-xa-ink-dim lg:block">
             {PORTAL_DISPLAY_NAME}
           </p>
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="text-sm font-medium text-muted hover:text-foreground"
+              className="text-sm font-medium text-xa-ink-soft transition hover:text-xa-gold"
             >
               Cerrar sesión
             </Link>
           </div>
         </header>
-        <main className="p-4 lg:p-8">{children}</main>
+        <main className="p-4 lg:p-10">{children}</main>
       </div>
     </div>
   );

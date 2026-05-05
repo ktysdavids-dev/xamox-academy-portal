@@ -9,20 +9,20 @@ import {
 
 export default function PortalHomePage() {
   return (
-    <div id="contenido-principal" className="flex min-h-screen flex-col">
-      <header className="border-b border-border-subtle bg-surface/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 lg:px-8">
-          <Logo />
-          <nav className="flex items-center gap-6 text-sm font-medium">
+    <div id="contenido-principal" className="xa-content flex min-h-screen flex-col">
+      <header className="sticky top-0 z-50 border-b border-xa-line bg-xa-deep/75 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 lg:px-8">
+          <Logo href="/" />
+          <nav className="flex items-center gap-4 sm:gap-8">
             <Link
               href={MARKETING_SITE_URL}
-              className="text-muted transition hover:text-foreground"
+              className="text-sm font-medium text-xa-ink-soft transition hover:text-xa-gold"
             >
               Sitio web
             </Link>
             <Link
               href="/login"
-              className="rounded-xl bg-brand px-4 py-2 text-white shadow-sm transition hover:bg-brand-hover"
+              className="rounded-full bg-xa-gold px-5 py-2.5 text-sm font-semibold text-xa-deep shadow-lg transition hover:bg-xa-gold-bright"
             >
               Iniciar sesión
             </Link>
@@ -31,62 +31,81 @@ export default function PortalHomePage() {
       </header>
 
       <main className="relative flex flex-1 flex-col overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand/15 via-transparent to-transparent" />
-        <div className="relative mx-auto flex max-w-6xl flex-1 flex-col justify-center px-4 py-16 lg:flex-row lg:items-center lg:gap-16 lg:px-8 lg:py-24">
+        <div className="relative mx-auto flex max-w-6xl flex-1 flex-col justify-center px-4 py-16 lg:flex-row lg:items-center lg:gap-20 lg:px-8 lg:py-28">
           <div className="max-w-xl flex-1">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-brand">
-              Campus online
+            <p className="mb-8 inline-flex items-center gap-3 font-mono text-xs font-medium uppercase tracking-[0.25em] text-xa-gold">
+              <span className="h-px w-8 bg-xa-gold" aria-hidden />
+              Campus online · Cohorte en directo
             </p>
-            <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground lg:text-5xl">
-              Bienvenido al portal de{" "}
-              <span className="text-brand">{PORTAL_DISPLAY_NAME}</span>
+            <h1 className="font-serif text-4xl font-light leading-[1.05] tracking-tight text-xa-ink md:text-5xl lg:text-6xl">
+              Tu espacio{" "}
+              <em className="italic text-xa-gold">Xamox</em>
+              <br />
+              para construir en serio.
             </h1>
-            <p className="mb-10 text-lg leading-relaxed text-muted">
-              {PORTAL_TAGLINE}. Aquí verás tus cursos, el progreso y los materiales
-              cuando completes la compra en{" "}
+            <p className="mt-8 max-w-xl text-lg leading-relaxed text-xa-ink-soft">
+              {PORTAL_TAGLINE} Entra al campus cuando hayas completado tu matrícula en{" "}
               <a
                 href={MARKETING_SITE_URL}
-                className="font-medium text-brand underline-offset-4 hover:underline"
+                className="font-medium text-xa-cyan underline-offset-4 transition hover:text-xa-gold hover:underline"
               >
                 xamoxacademy.com
               </a>
               .
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:items-center">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center rounded-xl bg-brand px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/25 transition hover:bg-brand-hover"
+                className="inline-flex items-center justify-center rounded-full bg-xa-gold px-8 py-4 text-base font-semibold text-xa-deep shadow-xl transition hover:bg-xa-gold-bright"
               >
                 Acceder al campus
               </Link>
               <Link
                 href={MARKETING_SITE_URL}
-                className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface px-6 py-3.5 text-base font-medium text-foreground transition hover:bg-surface-muted"
+                className="inline-flex items-center justify-center rounded-full border border-xa-line-strong bg-transparent px-8 py-4 text-base font-medium text-xa-ink transition hover:border-xa-gold/50 hover:text-xa-gold"
               >
                 Ver oferta formativa
               </Link>
             </div>
           </div>
-          <div className="mt-14 flex flex-1 justify-center lg:mt-0">
-            <div className="relative w-full max-w-md rounded-3xl border border-border-subtle bg-surface p-8 shadow-card">
-              <div className="mb-4 flex items-center gap-3">
-                <span className="h-3 w-3 rounded-full bg-red-400" aria-hidden />
-                <span className="h-3 w-3 rounded-full bg-amber-400" aria-hidden />
-                <span className="h-3 w-3 rounded-full bg-green-400" aria-hidden />
+
+          <div className="mt-16 flex flex-1 justify-center lg:mt-0">
+            <div className="relative w-full max-w-md overflow-hidden rounded-[28px] border border-xa-line bg-xa-night/90 p-8 shadow-card backdrop-blur-md">
+              <div
+                className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-xa-cyan/10 blur-3xl"
+                aria-hidden
+              />
+              <div
+                className="pointer-events-none absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-xa-magenta/10 blur-3xl"
+                aria-hidden
+              />
+
+              <div className="relative mb-6 flex items-center gap-2 border-b border-xa-line pb-4">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-xa-gold">
+                  {PORTAL_DISPLAY_NAME}
+                </span>
               </div>
-              <div className="space-y-4 text-sm">
-                <div className="rounded-xl bg-surface-muted p-4">
-                  <p className="font-medium text-foreground">Tu próxima lección</p>
-                  <p className="mt-1 text-muted">
-                    Continúa donde lo dejaste en el módulo principal.
+
+              <div className="relative space-y-5 text-sm">
+                <div className="rounded-2xl border border-xa-line bg-xa-deep/80 p-5">
+                  <p className="font-medium text-xa-ink">Tu próxima sesión</p>
+                  <p className="mt-2 text-xa-ink-soft">
+                    Continúa el método práctico donde lo dejaste — de la idea al
+                    despliegue.
                   </p>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-surface-muted">
-                  <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-brand to-brand-muted" />
+                <div>
+                  <div className="mb-2 flex justify-between font-mono text-xs text-xa-ink-dim">
+                    <span>Ruta del builder</span>
+                    <span className="text-xa-cyan">En curso</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-xa-deep ring-1 ring-xa-line">
+                    <div className="h-full w-2/3 rounded-full bg-gradient-xa shadow-[0_0_16px_rgba(45,212,255,0.35)]" />
+                  </div>
                 </div>
-                <p className="text-xs text-muted">
-                  El acceso real se activará cuando integres pagos y usuarios (Hotmart,
-                  Stripe, auth, etc.).
+                <p className="font-mono text-xs leading-relaxed text-xa-ink-dim">
+                  El acceso quedará ligado a tu compra (Stripe) y cuenta cuando conectes
+                  autenticación.
                 </p>
               </div>
             </div>

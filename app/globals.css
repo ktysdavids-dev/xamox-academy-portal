@@ -2,33 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Sistema de diseño Xamox — alineado con xamoxacademy.com y marca corporativa */
 :root {
-  --background: #f6f7fb;
-  --foreground: #0f172a;
-  --muted: #64748b;
-  --surface: #ffffff;
-  --surface-muted: #eef1f8;
-  --border-subtle: #e2e8f0;
-  --brand: #2563eb;
-  --brand-hover: #1d4ed8;
-  --brand-muted: #6366f1;
+  --xa-deep: #0a1628;
+  --xa-deeper: #060f1c;
+  --xa-night: #0f1e36;
+  --xa-line: rgba(244, 230, 191, 0.08);
+  --xa-line-strong: rgba(244, 230, 191, 0.18);
+  --xa-cyan: #2dd4ff;
+  --xa-cyan-soft: rgba(45, 212, 255, 0.12);
+  --xa-magenta: #d6336c;
+  --xa-magenta-soft: rgba(214, 51, 108, 0.12);
+  --xa-gold: #d4af37;
+  --xa-gold-bright: #f4c430;
+  --xa-gold-soft: rgba(212, 175, 55, 0.14);
+  --xa-cream: #f4e6bf;
+  --xa-ink: #faf7f1;
+  --xa-ink-soft: rgba(250, 247, 241, 0.62);
+  --xa-ink-dim: rgba(250, 247, 241, 0.42);
+  --background: var(--xa-deep);
+  --foreground: var(--xa-ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b1220;
-    --foreground: #f1f5f9;
-    --muted: #94a3b8;
-    --surface: #111827;
-    --surface-muted: #0f172a;
-    --border-subtle: #1e293b;
-    --brand: #3b82f6;
-    --brand-hover: #60a5fa;
-    --brand-muted: #818cf8;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen text-xa-ink antialiased;
+    background: var(--xa-deep);
+    font-family: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* Capas de ambiente: bruma cian/magenta + rejilla sutil (identidad “tech”) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        ellipse 80% 50% at 70% 0%,
+        rgba(45, 212, 255, 0.07),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 60% 40% at 20% 100%,
+        rgba(214, 51, 108, 0.06),
+        transparent 50%
+      );
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(
+        rgba(45, 212, 255, 0.04) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        rgba(214, 51, 108, 0.03) 1px,
+        transparent 1px
+      );
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 90% 80% at 50% 30%, black 20%, transparent 75%);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
+@layer utilities {
+  .xa-content {
+    @apply relative z-10;
+  }
 }

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import type { FormEvent } from "react";
+import { useState } from "react";
 import { Logo } from "@/components/logo";
 import { SiteFooter } from "@/components/site-footer";
 import { MARKETING_SITE_URL } from "@/lib/constants";
@@ -14,20 +15,17 @@ export default function LoginPage() {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    /** MVP: sin backend de auth — redirige al panel. Sustituye por NextAuth, Clerk, etc. */
     router.push("/dashboard");
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-surface-muted">
-      <header className="border-b border-border-subtle bg-surface px-4 py-4 lg:px-8">
+    <div className="xa-content flex min-h-screen flex-col">
+      <header className="border-b border-xa-line bg-xa-deep/80 px-4 py-5 backdrop-blur-xl lg:px-8">
         <div className="mx-auto flex max-w-lg items-center justify-between">
-          <Link href="/">
-            <Logo />
-          </Link>
+          <Logo href="/" />
           <Link
             href={MARKETING_SITE_URL}
-            className="text-sm font-medium text-muted hover:text-foreground"
+            className="text-sm font-medium text-xa-ink-soft transition hover:text-xa-gold"
           >
             Volver al sitio web
           </Link>
@@ -36,21 +34,27 @@ export default function LoginPage() {
 
       <main
         id="contenido-principal"
-        className="flex flex-1 flex-col items-center justify-center px-4 py-12"
+        className="flex flex-1 flex-col items-center justify-center px-4 py-14"
       >
-        <div className="w-full max-w-md rounded-2xl border border-border-subtle bg-surface p-8 shadow-card">
-          <h1 className="mb-2 text-2xl font-bold text-foreground">
+        <div className="relative w-full max-w-md overflow-hidden rounded-[28px] border border-xa-line bg-xa-night/95 p-9 shadow-card backdrop-blur-md">
+          <div
+            className="pointer-events-none absolute right-0 top-0 h-32 w-32 translate-x-1/3 -translate-y-1/3 rounded-full bg-xa-cyan/15 blur-2xl"
+            aria-hidden
+          />
+
+          <h1 className="font-serif text-3xl font-light tracking-tight text-xa-ink">
             Iniciar sesión
           </h1>
-          <p className="mb-8 text-sm text-muted">
-            Usa el correo con el que compraste el curso. La autenticación real la
-            conectarás después (proveedor de pagos, magic link, etc.).
+          <p className="mt-3 text-sm leading-relaxed text-xa-ink-soft">
+            Usa el correo con el que compraste la cohorte. Podrás enlazar aquí tu
+            proveedor de pagos y auth (Stripe, magic link, etc.).
           </p>
-          <form onSubmit={handleSubmit} className="space-y-5">
+
+          <form onSubmit={handleSubmit} className="relative mt-10 space-y-6">
             <div>
               <label
                 htmlFor="email"
-                className="mb-1.5 block text-sm font-medium text-foreground"
+                className="mb-2 block font-mono text-xs uppercase tracking-wider text-xa-gold"
               >
                 Correo electrónico
               </label>
@@ -61,13 +65,13 @@ export default function LoginPage() {
                 autoComplete="email"
                 required
                 placeholder="tu@email.com"
-                className="w-full rounded-xl border border-border-subtle bg-background px-4 py-3 text-foreground outline-none ring-brand/30 placeholder:text-muted focus:ring-2"
+                className="w-full rounded-xl border border-xa-line bg-xa-deep px-4 py-3.5 text-xa-ink outline-none ring-xa-cyan/40 placeholder:text-xa-ink-dim focus:border-xa-cyan/50 focus:ring-2"
               />
             </div>
             <div>
               <label
                 htmlFor="password"
-                className="mb-1.5 block text-sm font-medium text-foreground"
+                className="mb-2 block font-mono text-xs uppercase tracking-wider text-xa-gold"
               >
                 Contraseña
               </label>
@@ -77,24 +81,25 @@ export default function LoginPage() {
                 type="password"
                 autoComplete="current-password"
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-border-subtle bg-background px-4 py-3 text-foreground outline-none ring-brand/30 placeholder:text-muted focus:ring-2"
+                className="w-full rounded-xl border border-xa-line bg-xa-deep px-4 py-3.5 text-xa-ink outline-none ring-xa-cyan/40 placeholder:text-xa-ink-dim focus:border-xa-cyan/50 focus:ring-2"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-brand py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-hover disabled:opacity-70"
+              className="w-full rounded-full bg-xa-gold py-4 text-sm font-semibold text-xa-deep shadow-lg transition hover:bg-xa-gold-bright disabled:opacity-70"
             >
               {loading ? "Entrando…" : "Entrar al campus"}
             </button>
           </form>
-          <p className="mt-6 text-center text-sm text-muted">
+
+          <p className="relative mt-8 text-center text-sm text-xa-ink-soft">
             ¿Aún no eres alumno?{" "}
             <a
               href={MARKETING_SITE_URL}
-              className="font-medium text-brand hover:underline"
+              className="font-medium text-xa-cyan underline-offset-4 hover:text-xa-gold hover:underline"
             >
-              Ver cursos en la web
+              Ver cohorte en la web
             </a>
           </p>
         </div>
