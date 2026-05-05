@@ -1,0 +1,18 @@
+# Blueprint para Render: https://render.com/docs/blueprint-spec
+# Tras subir el repo a GitHub: New → Blueprint → conecta el repo y despliega.
+
+services:
+  - type: web
+    name: xamox-academy-portal
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+      # URL canónica del portal (SEO y metadata). Cámbiala si usas otra ruta.
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://app.xamoxacademy.com

@@ -1,101 +1,100 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Logo } from "@/components/logo";
+import { SiteFooter } from "@/components/site-footer";
+import {
+  MARKETING_SITE_URL,
+  PORTAL_DISPLAY_NAME,
+  PORTAL_TAGLINE,
+} from "@/lib/constants";
 
-export default function Home() {
+export default function PortalHomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div id="contenido-principal" className="flex min-h-screen flex-col">
+      <header className="border-b border-border-subtle bg-surface/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 lg:px-8">
+          <Logo />
+          <nav className="flex items-center gap-6 text-sm font-medium">
+            <Link
+              href={MARKETING_SITE_URL}
+              className="text-muted transition hover:text-foreground"
+            >
+              Sitio web
+            </Link>
+            <Link
+              href="/login"
+              className="rounded-xl bg-brand px-4 py-2 text-white shadow-sm transition hover:bg-brand-hover"
+            >
+              Iniciar sesión
+            </Link>
+          </nav>
+        </div>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <main className="relative flex flex-1 flex-col overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand/15 via-transparent to-transparent" />
+        <div className="relative mx-auto flex max-w-6xl flex-1 flex-col justify-center px-4 py-16 lg:flex-row lg:items-center lg:gap-16 lg:px-8 lg:py-24">
+          <div className="max-w-xl flex-1">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-brand">
+              Campus online
+            </p>
+            <h1 className="mb-6 text-4xl font-bold tracking-tight text-foreground lg:text-5xl">
+              Bienvenido al portal de{" "}
+              <span className="text-brand">{PORTAL_DISPLAY_NAME}</span>
+            </h1>
+            <p className="mb-10 text-lg leading-relaxed text-muted">
+              {PORTAL_TAGLINE}. Aquí verás tus cursos, el progreso y los materiales
+              cuando completes la compra en{" "}
+              <a
+                href={MARKETING_SITE_URL}
+                className="font-medium text-brand underline-offset-4 hover:underline"
+              >
+                xamoxacademy.com
+              </a>
+              .
+            </p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center rounded-xl bg-brand px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/25 transition hover:bg-brand-hover"
+              >
+                Acceder al campus
+              </Link>
+              <Link
+                href={MARKETING_SITE_URL}
+                className="inline-flex items-center justify-center rounded-xl border border-border-subtle bg-surface px-6 py-3.5 text-base font-medium text-foreground transition hover:bg-surface-muted"
+              >
+                Ver oferta formativa
+              </Link>
+            </div>
+          </div>
+          <div className="mt-14 flex flex-1 justify-center lg:mt-0">
+            <div className="relative w-full max-w-md rounded-3xl border border-border-subtle bg-surface p-8 shadow-card">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="h-3 w-3 rounded-full bg-red-400" aria-hidden />
+                <span className="h-3 w-3 rounded-full bg-amber-400" aria-hidden />
+                <span className="h-3 w-3 rounded-full bg-green-400" aria-hidden />
+              </div>
+              <div className="space-y-4 text-sm">
+                <div className="rounded-xl bg-surface-muted p-4">
+                  <p className="font-medium text-foreground">Tu próxima lección</p>
+                  <p className="mt-1 text-muted">
+                    Continúa donde lo dejaste en el módulo principal.
+                  </p>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-surface-muted">
+                  <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-brand to-brand-muted" />
+                </div>
+                <p className="text-xs text-muted">
+                  El acceso real se activará cuando integres pagos y usuarios (Hotmart,
+                  Stripe, auth, etc.).
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      <SiteFooter />
     </div>
   );
 }

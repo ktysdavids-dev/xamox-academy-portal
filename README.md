@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Xamox Academy — Portal del alumno
 
-## Getting Started
+Aplicación **Next.js** para el campus en **app.xamoxacademy.com**. La landing de ventas sigue en Webflow (**www.xamoxacademy.com**).
 
-First, run the development server:
+## Desarrollo local
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Subir a GitHub
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cd /ruta/al/proyecto
+git status
+git remote add origin https://github.com/TU_USUARIO/xamox-academy-portal.git
+git branch -M main
+git push -u origin main
+```
 
-## Learn More
+(Crea antes el repositorio vacío en GitHub.)
 
-To learn more about Next.js, take a look at the following resources:
+## Desplegar en Render
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **New** → **Blueprint** (o **Web Service** si prefieres un solo servicio).
+2. Conecta el repositorio de GitHub y selecciona la rama `main`.
+3. Render detectará `render.yaml`. Confirma región y plan.
+4. Variables: revisa `NEXT_PUBLIC_SITE_URL` (por defecto `https://app.xamoxacademy.com`). Ajusta si tu URL de Render es temporal (`*.onrender.com`).
+5. Tras el deploy, en **Settings** → **Custom Domain**, añade **app.xamoxacademy.com** y configura el **CNAME** en tu DNS tal como indica Render.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Render inyecta `PORT` automáticamente; `next start` lo usa sin cambios.
 
-## Deploy on Vercel
+## Qué incluye este MVP
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Página de entrada del portal, login (demo) y panel **Mis cursos** con datos de ejemplo.
+- Sustituye el login demo por **NextAuth**, **Clerk**, **Supabase Auth**, etc., y los cursos por tu API, CMS o integración con Hotmart u otro proveedor.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Licencia
+
+Propiedad de Xamox Academy. Uso según tu política interna.
