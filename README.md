@@ -2,6 +2,23 @@
 
 Aplicación **Next.js** para el campus en **app.xamoxacademy.com**. La landing de ventas sigue en Webflow (**www.xamoxacademy.com**).
 
+## Repositorio (GitHub)
+
+Código publicado y listo para desplegar:
+
+**https://github.com/ktysdavids-dev/xamox-academy-portal**
+
+## Desplegar en Render (un clic)
+
+Pulsa el botón, inicia sesión en Render, autoriza el repositorio y aplica el Blueprint (`render.yaml` ya está en la raíz):
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ktysdavids-dev/xamox-academy-portal)
+
+Después del primer deploy:
+
+1. Si Render te da una URL `*.onrender.com`, en **Environment** ajusta `NEXT_PUBLIC_SITE_URL` a esa URL (para metadata/SEO) hasta que tengas el dominio propio.
+2. **Settings** → **Custom Domain** → añade **app.xamoxacademy.com** y en tu DNS el **CNAME** que indique Render.
+
 ## Desarrollo local
 
 ```bash
@@ -11,28 +28,6 @@ npm run dev
 ```
 
 Abre [http://localhost:3000](http://localhost:3000).
-
-## Subir a GitHub
-
-```bash
-cd /ruta/al/proyecto
-git status
-git remote add origin https://github.com/TU_USUARIO/xamox-academy-portal.git
-git branch -M main
-git push -u origin main
-```
-
-(Crea antes el repositorio vacío en GitHub.)
-
-## Desplegar en Render
-
-1. **New** → **Blueprint** (o **Web Service** si prefieres un solo servicio).
-2. Conecta el repositorio de GitHub y selecciona la rama `main`.
-3. Render detectará `render.yaml`. Confirma región y plan.
-4. Variables: revisa `NEXT_PUBLIC_SITE_URL` (por defecto `https://app.xamoxacademy.com`). Ajusta si tu URL de Render es temporal (`*.onrender.com`).
-5. Tras el deploy, en **Settings** → **Custom Domain**, añade **app.xamoxacademy.com** y configura el **CNAME** en tu DNS tal como indica Render.
-
-Render inyecta `PORT` automáticamente; `next start` lo usa sin cambios.
 
 ## Qué incluye este MVP
 
