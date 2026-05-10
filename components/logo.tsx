@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { XamoxMark } from "@/components/xamox-mark";
+import Image from "next/image";
 
 type LogoProps = {
   className?: string;
@@ -9,29 +9,38 @@ type LogoProps = {
   size?: "default" | "lg";
 };
 
+/**
+ * Logo oficial Xamox Academy — wordmark descargado del CDN de Webflow
+ * (cdn.prod.website-files.com/.../Logo Xamox Academy.webp).
+ * Se sirve desde /public/brand para no depender de la red de Webflow.
+ */
 export function Logo({ className = "", href, size = "default" }: LogoProps) {
-  const markSize = size === "lg" ? 52 : 40;
+  const height = size === "lg" ? 56 : 40;
+  const width = size === "lg" ? 224 : 160;
+
   const inner = (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <XamoxMark size={markSize} className="shrink-0 drop-shadow-[0_0_12px_rgba(45,212,255,0.35)]" />
-      <div className="flex flex-col leading-none">
-        <span className="font-serif text-xl font-medium tracking-tight text-xa-ink md:text-2xl">
-          X<span className="italic text-xa-gold">amox</span>
-        </span>
-        <span className="mt-1 flex items-center gap-2">
-          <span className="h-px w-4 bg-xa-gold/50" aria-hidden />
-          <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.35em] text-xa-gold md:text-[11px]">
-            Academy
-          </span>
-          <span className="h-px w-4 bg-xa-gold/50" aria-hidden />
-        </span>
-      </div>
+    <div
+      className={`flex items-center ${className}`}
+      style={{ height, width }}
+    >
+      <Image
+        src="/brand/logo-xamox-academy.webp"
+        alt="Xamox Academy"
+        width={width}
+        height={height}
+        priority
+        className="h-full w-full object-contain drop-shadow-[0_0_18px_rgba(212,175,55,0.18)]"
+      />
     </div>
   );
 
   if (href) {
     return (
-      <Link href={href} className="transition-opacity hover:opacity-90">
+      <Link
+        href={href}
+        aria-label="Xamox Academy — Inicio"
+        className="inline-flex transition-opacity hover:opacity-90"
+      >
         {inner}
       </Link>
     );

@@ -1,0 +1,53 @@
+{
+  "name": "Xamox Academy",
+  "short_name": "Xamox",
+  "description": "Campus de Xamox Academy — del prompt al producto desplegado.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#060B17",
+  "theme_color": "#D4AF37",
+  "lang": "es-ES",
+  "dir": "ltr",
+  "categories": ["education", "productivity", "developer"],
+  "icons": [
+    {
+      "src": "/brand/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mentoría gratuita",
+      "short_name": "Mentoría",
+      "url": "/mentoria",
+      "description": "Reserva tu plaza en la mentoría gratuita."
+    },
+    {
+      "name": "Comprar cohorte",
+      "short_name": "Comprar",
+      "url": "/comprar",
+      "description": "Asegura tu plaza en la edición en directo."
+    },
+    {
+      "name": "Mi campus",
+      "short_name": "Campus",
+      "url": "/dashboard"
+    }
+  ]
+}

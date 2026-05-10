@@ -32,6 +32,25 @@ export const metadata: Metadata = {
   },
   description:
     "Accede a tus cursos, materiales y progreso en el campus online de Xamox Academy.",
+  applicationName: PORTAL_DISPLAY_NAME,
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Xamox Academy",
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: "/brand/favicon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/brand/logo-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/brand/logo-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/brand/apple-touch-icon.png", sizes: "180x180" }],
+    shortcut: ["/brand/favicon-48.png"],
+  },
   openGraph: {
     title: PORTAL_DISPLAY_NAME,
     description: "Campus online — Xamox Academy.",
@@ -39,6 +58,13 @@ export const metadata: Metadata = {
     siteName: PORTAL_DISPLAY_NAME,
     locale: "es_ES",
     type: "website",
+    images: [{ url: "/brand/logo-512.png", width: 512, height: 512 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: PORTAL_DISPLAY_NAME,
+    description: "Campus online — Xamox Academy.",
+    images: ["/brand/logo-512.png"],
   },
   alternates: {
     canonical: "/",
@@ -47,6 +73,15 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+};
+
+export const viewport = {
+  themeColor: "#D4AF37",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  colorScheme: "dark" as const,
 };
 
 export default function RootLayout({
