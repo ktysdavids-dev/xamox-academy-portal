@@ -1,63 +1,114 @@
-# Xamox Academy — Portal del alumno
+# Xamox Academy — Sistema unificado
 
-Aplicación **Next.js 15** + **PostgreSQL** + **Auth.js** + **Stripe** para el campus en **app.xamoxacademy.com**. La venta sigue en Webflow (**www.xamoxacademy.com**).
+Aplicación **Next.js 15** + **PostgreSQL** + **Auth.js** + **Stripe** que centraliza
+todo el ciclo de vida del alumno de Xamox Academy en una sola app.
 
-Incluye: matrícula automática tras pago, acceso con enlace de éxito, contraseña, panel de alumno, **panel de administración** (cursos, módulos, lecciones, PDFs, enlaces, subida de archivos con Vercel Blob), y webhook de Stripe.
+Sustituye a los dos servicios anteriores (`xamox-mentoria.onrender.com` y
+`xamox-academy-portal.onrender.com`) y los reemplaza por un único portal:
 
-## Repositorio
+```
+Webflow www.xamoxacademy.com  ──►  /mentoria  (inscripción gratis)
+                                       │
+                                       ▼
+                                 Campus alumno
+                                       │
+                                       ├─►  /comprar  (Stripe Payment Link)
+                                       └─►  /dashboard (cursos, lecciones)
+                                                │
+                                                └─►  /admin (solo super-admin)
+```
 
-**https://github.com/ktysdavids-dev/xamox-academy-portal** (sustituye por el tuyo si hiciste fork)
+## Rutas principales
+
+| Ruta | Para quién | Función |
+|---|---|---|
+| `/` | Público | Home institucional con acceso al campus, mentoría y compra |
+| `/mentoria` | Público | Formulario gratuito al que redirige la landing de Webflow. Crea cuenta + matrícula automática + acceso al campus |
+| `/comprar` | Público | Redirección al Payment Link de Stripe activo |
+| `/login` | Alumno | Inicio de sesión con email + contraseña, o token de un solo uso desde Stripe |
+| `/dashboard` | Alumno | Cursos matriculados, materiales, próximas sesiones |
+| `/dashboard/cursos/[slug]` | Alumno | Detalle de un curso |
+| `/dashboard/leccion/[lessonId]` | Alumno | Lección con vídeo, markdown y materiales |
+| `/admin` | Super-admin | Métricas y gestión |
+| `/admin/courses` | Super-admin | CRUD de cursos, módulos, lecciones, materiales |
+| `/api/stripe/webhook` | Sistema | Recibe `checkout.session.completed` y matricula al pagador |
+| `/campus/continue` | Sistema | Success URL de Stripe → token + matrícula automática |
+| `/auth/continue` | Sistema | Consume el token de un solo uso y abre sesión |
+
+## Stack
+
+- Next.js 15 (App Router, RSC, Server Actions)
+- Auth.js (next-auth 5 beta) con sesión JWT
+- Prisma 5 + PostgreSQL (Render Postgres)
+- Stripe (Payment Link + webhook)
+- Tailwind CSS + componentes propios
+
+## Modelo de datos
+
+`User` (con role STUDENT/ADMIN) → `Enrollment` → `Course` → `Module` → `Lesson` → `Material`.
+También `OneTimeLogin` (acceso desde Stripe) y `StripeEvent` (idempotencia del webhook).
+
+## Variables de entorno
+
+```bash
+# Postgres (Render lo inyecta automáticamente vía Blueprint)
+DATABASE_URL=
+
+# Auth.js
+NEXTAUTH_SECRET=    # 48+ chars aleatorios
+NEXTAUTH_URL=       # URL pública del portal
+
+# URL pública del portal (para emails y CTAs)
+NEXT_PUBLIC_SITE_URL=
+
+# Stripe
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_STRIPE_PAYMENT_LINK=https://buy.stripe.com/bJedR894Nfosb9ZaL46Na00
+
+# Admins (separados por coma, sin espacios)
+ADMIN_EMAILS=ktysdavids@gmail.com
+
+# Cuentas iniciales (se crean en cada deploy si no existen)
+BOOTSTRAP_ADMIN_EMAIL=ktysdavids@gmail.com
+BOOTSTRAP_ADMIN_PASSWORD=…
+BOOTSTRAP_STUDENT_EMAIL=djxamo13@gmail.com
+BOOTSTRAP_STUDENT_PASSWORD=…
+
+# Opcional: subida de archivos a Vercel Blob
+BLOB_READ_WRITE_TOKEN=
+```
 
 ## Desarrollo local
-
-1. Crea base PostgreSQL (local o Render) y copia `DATABASE_URL`.
-2. Configura variables (ver `.env.example`).
 
 ```bash
 npm install
 cp .env.example .env.local
-# edita .env.local
+# rellena variables
 npx prisma migrate dev
 npm run db:seed
 npm run dev
 ```
 
-- **Alumnos:** [http://localhost:3000/login](http://localhost:3000/login) (tras matrícula simulada o flujo Stripe de prueba).
-- **Admin:** el email debe estar en `ADMIN_EMAILS` → [http://localhost:3000/admin](http://localhost:3000/admin)
+## Deploy en Render
 
-## Stripe (pago en la web)
+El blueprint `render.yaml` crea Postgres + Web Service y ejecuta:
 
-1. **Clave secreta** en `STRIPE_SECRET_KEY` (panel Stripe → API keys).
-2. **Link o Checkout de pago** (el que ya usas en xamoxacademy.com):
-   - **URL de éxito (Success URL):**  
-     `https://app.xamoxacademy.com/campus/continue?session_id={CHECKOUT_SESSION_ID}`  
-     (en pruebas: `http://localhost:3000/campus/continue?session_id={CHECKOUT_SESSION_ID}`).
-   - **Metadata (recomendado):** clave `courseSlug` = `cohorte-01` (debe existir en la base; el seed lo crea). Si no envías metadata, se usa el curso por defecto `cohorte-01`.
-3. **Webhook:** URL `https://app.xamoxacademy.com/api/stripe/webhook` (o tu URL de Render), evento `checkout.session.completed`, y pega el **signing secret** en `STRIPE_WEBHOOK_SECRET`.
+- `npm ci && npm run build` (build)
+- `npx prisma migrate deploy && npm run db:seed` (preDeploy → migra y crea/actualiza usuarios bootstrap)
+- `npm start` (runtime)
 
-Tras pagar, el usuario entra en `/campus/continue` → se crea/actualiza la cuenta y la matrícula → sesión con token de un solo uso → debe **crear contraseña** → ya puede usar `/login` cuando quiera.
+Configura los secretos `NEXTAUTH_SECRET`, `STRIPE_*`, `BOOTSTRAP_*_PASSWORD`,
+`ADMIN_EMAILS` y opcional `BLOB_READ_WRITE_TOKEN` en Environment.
 
-## Panel de administración
+## Stripe
 
-- Ruta: **`/admin`** (solo usuarios cuyo email figure en `ADMIN_EMAILS`).
-- Ahí gestionas **cursos → módulos → lecciones** y materiales (Markdown, vídeo por URL YouTube u otro enlace, PDF/enlaces/imagen/vídeo por URL o subida con **Vercel Blob** si defines `BLOB_READ_WRITE_TOKEN`).
-
-## Desplegar en Render
-
-Blueprint `render.yaml`: crea Postgres + Web Service y ejecuta **`preDeployCommand: npx prisma migrate deploy`**.
-
-1. [Deploy to Render](https://render.com/deploy?repo=https://github.com/ktysdavids-dev/xamox-academy-portal) (ajusta el repo si cambió).
-2. En **Environment**, rellena manualmente:
-   - `NEXTAUTH_SECRET` (cadena larga aleatoria),
-   - `ADMIN_EMAILS`,
-   - `STRIPE_SECRET_KEY`,
-   - `STRIPE_WEBHOOK_SECRET`,
-   - opcional `BLOB_READ_WRITE_TOKEN`,
-   - comprueba `NEXTAUTH_URL` y `NEXT_PUBLIC_SITE_URL` con tu URL real (`*.onrender.com` o dominio propio).
-3. Tras el primer deploy estable, en **Shell** de Render:  
-   `npx prisma db seed`  
-   (crea el curso `cohorte-01` y una lección de ejemplo).
+1. Payment Link activo: `https://buy.stripe.com/bJedR894Nfosb9ZaL46Na00`
+2. Success URL: `https://<tu-portal>/campus/continue?session_id={CHECKOUT_SESSION_ID}`
+3. Webhook: `https://<tu-portal>/api/stripe/webhook` · evento
+   `checkout.session.completed` · pega el signing secret en `STRIPE_WEBHOOK_SECRET`
+4. Metadata recomendada: `courseSlug=cohorte-01` (default si vacío)
 
 ## Licencia
 
-Propiedad de Xamox Academy. Uso según tu política interna.
+Propiedad de Xamox Academy. Uso según política interna.
