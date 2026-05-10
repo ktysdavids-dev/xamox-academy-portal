@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { CourseCard } from "@/components/course-card";
 import { prisma } from "@/lib/prisma";
+import { STRIPE_PAYMENT_LINK } from "@/lib/constants";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -70,13 +71,48 @@ export default async function DashboardPage() {
               Cuando completes el pago en la web, podrás entrar desde el enlace de
               Stripe o iniciando sesión aquí.
             </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <a
+                href="/mentoria"
+                className="inline-flex justify-center rounded-full border border-xa-line-strong px-6 py-3 text-sm font-semibold text-xa-ink hover:border-xa-gold/50 hover:text-xa-gold"
+              >
+                Reservar mentoría gratis
+              </a>
+              <a
+                href={STRIPE_PAYMENT_LINK}
+                className="inline-flex justify-center rounded-full bg-xa-gold px-6 py-3 text-sm font-semibold text-xa-deep hover:bg-xa-gold-bright"
+              >
+                Comprar cohorte
+              </a>
+            </div>
           </div>
         ) : (
-          <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
-            {cards.map((c) => (
-              <CourseCard key={c.slug} course={c} />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+              {cards.map((c) => (
+                <CourseCard key={c.slug} course={c} />
+              ))}
+            </div>
+            <div className="mt-10 rounded-3xl border border-xa-line bg-xa-night/80 p-8">
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-xa-gold">
+                Siguiente paso
+              </p>
+              <h3 className="mt-3 font-serif text-2xl font-light text-xa-ink">
+                De la mentoría al curso completo
+              </h3>
+              <p className="mt-3 max-w-3xl text-xa-ink-soft">
+                La mentoría te abre la puerta. La cohorte en directo es donde
+                construyes tu app con acompañamiento: lunes y miércoles de 18:00
+                a 21:00, durante 4 semanas.
+              </p>
+              <a
+                href={STRIPE_PAYMENT_LINK}
+                className="mt-6 inline-flex rounded-full bg-xa-gold px-7 py-3 text-sm font-semibold text-xa-deep hover:bg-xa-gold-bright"
+              >
+                Comprar acceso a la cohorte
+              </a>
+            </div>
+          </>
         )}
       </section>
     </div>

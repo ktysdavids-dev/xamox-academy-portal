@@ -5,6 +5,7 @@ import {
   MARKETING_SITE_URL,
   PORTAL_DISPLAY_NAME,
   PORTAL_TAGLINE,
+  STRIPE_PAYMENT_LINK,
 } from "@/lib/constants";
 
 export default function PortalHomePage() {
@@ -44,7 +45,8 @@ export default function PortalHomePage() {
               para construir en serio.
             </h1>
             <p className="mt-8 max-w-xl text-lg leading-relaxed text-xa-ink-soft">
-              {PORTAL_TAGLINE} Entra al campus cuando hayas completado tu matrícula en{" "}
+              {PORTAL_TAGLINE} Aquí se une todo el sistema: mentoría gratuita,
+              compra de cohorte, acceso de alumno y panel privado de contenidos. Entra al campus cuando hayas completado tu matrícula en{" "}
               <a
                 href={MARKETING_SITE_URL}
                 className="font-medium text-xa-cyan underline-offset-4 transition hover:text-xa-gold hover:underline"
@@ -55,16 +57,22 @@ export default function PortalHomePage() {
             </p>
             <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:items-center">
               <Link
-                href="/login"
+                href="/mentoria"
                 className="inline-flex items-center justify-center rounded-full bg-xa-gold px-8 py-4 text-base font-semibold text-xa-deep shadow-xl transition hover:bg-xa-gold-bright"
+              >
+                Mentoría gratis
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center rounded-full border border-xa-line-strong bg-transparent px-8 py-4 text-base font-medium text-xa-ink transition hover:border-xa-gold/50 hover:text-xa-gold"
               >
                 Acceder al campus
               </Link>
               <Link
-                href={MARKETING_SITE_URL}
+                href={STRIPE_PAYMENT_LINK}
                 className="inline-flex items-center justify-center rounded-full border border-xa-line-strong bg-transparent px-8 py-4 text-base font-medium text-xa-ink transition hover:border-xa-gold/50 hover:text-xa-gold"
               >
-                Ver oferta formativa
+                Comprar cohorte
               </Link>
             </div>
           </div>
@@ -88,10 +96,10 @@ export default function PortalHomePage() {
 
               <div className="relative space-y-5 text-sm">
                 <div className="rounded-2xl border border-xa-line bg-xa-deep/80 p-5">
-                  <p className="font-medium text-xa-ink">Tu próxima sesión</p>
+                  <p className="font-medium text-xa-ink">Sistema único</p>
                   <p className="mt-2 text-xa-ink-soft">
-                    Continúa el método práctico donde lo dejaste — de la idea al
-                    despliegue.
+                    Mentoria gratuita → campus → compra → contenidos del curso,
+                    todo centralizado en una sola app.
                   </p>
                 </div>
                 <div>
@@ -104,8 +112,8 @@ export default function PortalHomePage() {
                   </div>
                 </div>
                 <p className="font-mono text-xs leading-relaxed text-xa-ink-dim">
-                  El acceso quedará ligado a tu compra (Stripe) y cuenta cuando conectes
-                  autenticación.
+                  Si entras desde la mentoría tendrás acceso gratuito. Si compras la
+                  cohorte, Stripe activa automáticamente tu curso completo.
                 </p>
               </div>
             </div>
