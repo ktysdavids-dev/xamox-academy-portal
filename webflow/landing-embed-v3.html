@@ -1,0 +1,928 @@
+<!-- ============================================================
+     XAMOX ACADEMY · LANDING EMBED v3 (hero → footer)
+     Versión: 2026-05-10 · Pegar en Webflow → Embed component
+     ============================================================
+     CAMBIOS vs v2:
+     · TODOS los CTAs apuntan al sistema unificado:
+        - Inscripción mentoría → https://campus.xamoxacademy.com/mentoria
+        - Compra cohorte       → https://campus.xamoxacademy.com/comprar
+        - Portal alumno        → https://campus.xamoxacademy.com/dashboard
+     · Meta Pixel "Lead" event al click en CTAs de mentoría
+     · JSON-LD Schema.org (Event + Course + Organization) → rich snippets en Google
+     · Sticky bottom CTA en mobile → +20-30% conversión típica
+     · Skip-to-content link para accesibilidad (WCAG)
+     · Outbound link tracking (dataLayer push para GTM/GA4)
+     · Aria labels y roles donde faltaban
+     · Loading="lazy" en imágenes que no son hero
+     · prefers-reduced-motion respetado en animaciones nuevas
+     ============================================================
+     CTAs MENTORÍA → https://campus.xamoxacademy.com/mentoria
+     CTAs COMPRA   → https://campus.xamoxacademy.com/comprar (redirige a Stripe)
+     PORTAL ALUMNO → https://campus.xamoxacademy.com/dashboard
+
+     PENDIENTE:
+     · Sustituir [VSL_EMBED] por el iframe real cuando lo tengas
+     · Píxel Meta base sigue en Project Settings › Custom Code › <head>
+       (este embed solo dispara el evento "Lead" cuando ya está cargado)
+     ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+.xa{
+  --xa-deep:#060B17; --xa-night:#0B1426; --xa-mid:#10203A;
+  --xa-line:rgba(220,232,255,.08); --xa-line-2:rgba(212,175,55,.22);
+  --xa-cyan:#2DD4FF; --xa-magenta:#D6336C;
+  --xa-gold:#D4AF37; --xa-gold-bright:#F4C430; --xa-gold-soft:rgba(212,175,55,.14);
+  --xa-ink:#FFFFFF; --xa-ink-soft:rgba(232,238,247,.65); --xa-ink-dim:rgba(232,238,247,.42); --xa-ink-low:rgba(232,238,247,.28);
+  --xa-display:"Fraunces",ui-serif,Georgia,serif;
+  --xa-sans:"Inter Tight",-apple-system,BlinkMacSystemFont,sans-serif;
+  --xa-mono:"JetBrains Mono",ui-monospace,monospace;
+  background:var(--xa-deep);color:var(--xa-ink);font-family:var(--xa-sans);
+  -webkit-font-smoothing:antialiased;line-height:1.55;position:relative;overflow-x:hidden;
+}
+.xa *,.xa *::before,.xa *::after{box-sizing:border-box;margin:0;padding:0}
+.xa a{color:inherit;text-decoration:none}
+.xa img{max-width:100%;height:auto;display:block}
+.xa button{font-family:inherit;cursor:pointer;border:none}
+
+/* Skip-to-content (a11y) */
+.xa-skip{position:absolute;left:-9999px;top:0;background:var(--xa-gold);color:var(--xa-deep);padding:10px 18px;font-weight:600;font-size:14px;border-radius:0 0 8px 0;z-index:1000;transition:left .15s ease}
+.xa-skip:focus{left:0}
+
+/* ── CURSOR HALO ─────────────────────────────────────────── */
+.xa-cursor{
+  position:fixed;top:0;left:0;width:380px;height:380px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,55,.18) 0%,rgba(45,212,255,.08) 35%,transparent 70%);
+  transform:translate(-50%,-50%);pointer-events:none;z-index:1;
+  filter:blur(28px);opacity:0;transition:opacity .6s ease;mix-blend-mode:screen;
+}
+.xa.is-ready .xa-cursor{opacity:1}
+@media(hover:none),(max-width:980px){.xa-cursor{display:none}}
+
+/* ── PARTICLES (golden dust) ────────────────────────────── */
+.xa-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.xa-particles span{
+  position:absolute;width:2px;height:2px;border-radius:50%;
+  background:var(--xa-gold);box-shadow:0 0 6px var(--xa-gold);
+  animation:xa-float 18s linear infinite;opacity:0
+}
+@keyframes xa-float{
+  0%{transform:translateY(100vh) translateX(0);opacity:0}
+  10%{opacity:.6}
+  90%{opacity:.4}
+  100%{transform:translateY(-100px) translateX(40px);opacity:0}
+}
+
+/* ── REVEAL ON SCROLL ───────────────────────────────────── */
+.xa-rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
+.xa-rv.is-in{opacity:1;transform:none}
+
+/* ── CONTAINER & SECTION ────────────────────────────────── */
+.xa-wrap{max-width:1200px;margin:0 auto;padding:0 28px;position:relative;z-index:2}
+.xa-section{position:relative;padding:120px 0;border-top:1px solid var(--xa-line)}
+
+/* ── BG GRID SUTIL ──────────────────────────────────────── */
+.xa-grid-bg{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%,rgba(212,175,55,.08),transparent 60%),
+    linear-gradient(rgba(220,232,255,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(220,232,255,.04) 1px,transparent 1px);
+  background-size:auto,72px 72px,72px 72px;
+  mask-image:radial-gradient(ellipse 80% 100% at 50% 50%,#000 30%,transparent 100%)
+}
+
+/* ── TYPOGRAPHY ─────────────────────────────────────────── */
+.xa-eyebrow{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:var(--xa-mono);font-size:11px;font-weight:500;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--xa-gold);margin-bottom:24px;
+}
+.xa-eyebrow::before{content:"";width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--xa-gold))}
+.xa-eyebrow.center{justify-content:center}
+.xa-eyebrow.center::after{content:"";width:24px;height:1px;background:linear-gradient(90deg,var(--xa-gold),transparent)}
+.xa-h1{
+  font-family:var(--xa-display);font-weight:300;
+  font-size:clamp(44px,7vw,92px);line-height:1;letter-spacing:-.03em;
+  font-variation-settings:"opsz" 144;color:var(--xa-ink);margin-bottom:28px;
+}
+.xa-h1 em,.xa-h2 em{
+  font-style:italic;font-weight:300;
+  background:linear-gradient(135deg,var(--xa-gold-bright),var(--xa-gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.xa-h2{
+  font-family:var(--xa-display);font-weight:300;
+  font-size:clamp(34px,4.6vw,60px);line-height:1.05;letter-spacing:-.02em;
+  font-variation-settings:"opsz" 144;color:var(--xa-ink);margin-bottom:20px;
+}
+.xa-lede{
+  font-size:clamp(15px,1.4vw,18px);line-height:1.6;color:var(--xa-ink-soft);
+  max-width:54ch;margin-bottom:32px;font-weight:300;
+}
+.xa-lede.center{margin-left:auto;margin-right:auto}
+
+/* ── BUTTONS ────────────────────────────────────────────── */
+.xa-btn{
+  display:inline-flex;align-items:center;gap:12px;
+  font-weight:500;font-size:15px;letter-spacing:.005em;
+  padding:18px 32px;border-radius:999px;line-height:1;
+  transition:all .35s cubic-bezier(.2,.8,.2,1);
+  position:relative;will-change:transform;
+}
+.xa-btn--gold{
+  background:linear-gradient(135deg,var(--xa-gold-bright),var(--xa-gold));
+  color:var(--xa-deep);font-weight:600;
+  box-shadow:0 0 0 1px rgba(212,175,55,.3),0 20px 40px -16px rgba(212,175,55,.4);
+}
+.xa-btn--gold:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 0 1px rgba(212,175,55,.5),0 28px 56px -16px rgba(212,175,55,.6);
+}
+.xa-btn--ghost{
+  background:transparent;color:var(--xa-ink);
+  border:1px solid rgba(255,255,255,.18);
+}
+.xa-btn--ghost:hover{border-color:var(--xa-gold);color:var(--xa-gold)}
+.xa-btn svg{transition:transform .3s ease;flex-shrink:0}
+.xa-btn:hover svg{transform:translateX(4px)}
+
+/* ── NAV ────────────────────────────────────────────────── */
+.xa-nav{position:absolute;top:0;left:0;right:0;z-index:50;padding:24px clamp(20px,4vw,48px)}
+.xa-nav__inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.xa-nav__brand{display:flex;align-items:center;gap:12px}
+.xa-nav__brand-logo{width:36px;height:36px;object-fit:contain}
+.xa-nav__brand-text{font-family:var(--xa-display);font-weight:400;font-size:18px;letter-spacing:-.01em;color:var(--xa-ink)}
+.xa-nav__brand-text span{font-style:italic;color:var(--xa-gold)}
+.xa-nav__cta{
+  background:transparent;color:var(--xa-ink);padding:10px 22px;border-radius:999px;
+  font-size:13px;font-weight:400;border:1px solid rgba(255,255,255,.18);
+  transition:all .3s ease;
+}
+.xa-nav__cta:hover{background:var(--xa-gold);color:var(--xa-deep);border-color:var(--xa-gold)}
+
+/* ── HERO ───────────────────────────────────────────────── */
+.xa-hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;padding:120px 24px 80px;overflow:hidden;border-top:none}
+.xa-hero::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 100% 80% at 50% 50%,transparent 0%,transparent 35%,rgba(2,5,12,.55) 75%,rgba(2,5,12,.9) 100%);
+}
+.xa-hero__inner{position:relative;z-index:3;max-width:880px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center}
+.xa-hero__logo-wrap{
+  position:relative;margin-bottom:clamp(36px,5vw,52px);
+  width:clamp(200px,26vw,300px);aspect-ratio:1;
+  display:flex;align-items:center;justify-content:center;
+  will-change:transform;
+}
+.xa-hero__halo{
+  position:absolute;inset:-30%;
+  background:radial-gradient(circle,rgba(45,212,255,.25) 0%,rgba(212,175,55,.18) 30%,rgba(214,51,108,.12) 50%,transparent 75%);
+  filter:blur(50px);animation:xa-pulse 4s ease-in-out infinite;z-index:0;
+}
+@keyframes xa-pulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+.xa-hero__logo-img{
+  position:relative;z-index:1;width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 0 32px rgba(45,212,255,.25)) drop-shadow(0 16px 40px rgba(0,0,0,.5));
+}
+.xa-hero__title{margin-bottom:28px;max-width:18ch}
+.xa-hero__lede{max-width:46ch;margin-bottom:clamp(36px,5vw,48px)}
+.xa-hero__cta-block{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:clamp(48px,6vw,64px)}
+.xa-hero__cta-row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.xa-hero__cta-meta{font-size:12px;color:var(--xa-ink-dim);letter-spacing:.04em;font-family:var(--xa-mono);margin-top:6px}
+.xa-hero__cta-meta b{color:var(--xa-gold-bright);font-weight:500}
+.xa-hero__meta{display:inline-flex;align-items:center;gap:36px;flex-wrap:wrap;justify-content:center;padding-top:32px;border-top:1px solid var(--xa-line)}
+.xa-hero__meta-item{display:inline-flex;align-items:baseline;gap:8px;font-size:13px;color:var(--xa-ink-soft);font-family:var(--xa-mono);letter-spacing:.04em}
+.xa-hero__meta-item strong{font-family:var(--xa-display);font-weight:400;font-size:24px;color:var(--xa-gold-bright);letter-spacing:-.01em;font-variation-settings:"opsz" 144}
+
+/* Hero entry animations */
+@keyframes xa-fade-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes xa-zoom-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.xa-hero__inner > *{animation:xa-fade-up 1s cubic-bezier(.2,.8,.2,1) backwards}
+.xa-hero__logo-wrap{animation:xa-zoom-in 1.2s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:.1s}
+.xa-hero__inner > .xa-eyebrow{animation-delay:.45s}
+.xa-hero__inner > .xa-h1{animation-delay:.55s}
+.xa-hero__inner > .xa-lede{animation-delay:.7s}
+.xa-hero__cta-block{animation-delay:.85s}
+.xa-hero__meta{animation-delay:1s}
+
+/* ── VSL SECTION ────────────────────────────────────────── */
+.xa-vsl{padding:100px 0 120px;text-align:center;position:relative}
+.xa-vsl__head{max-width:680px;margin:0 auto 48px}
+.xa-vsl__player{
+  max-width:920px;margin:0 auto;aspect-ratio:16/9;
+  border:1px solid var(--xa-line-2);border-radius:8px;
+  background:linear-gradient(135deg,var(--xa-night) 0%,var(--xa-mid) 100%);
+  position:relative;overflow:hidden;cursor:pointer;
+  box-shadow:0 0 0 1px rgba(212,175,55,.1),0 40px 80px -20px rgba(0,0,0,.6),0 0 80px -20px rgba(212,175,55,.2);
+  transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s cubic-bezier(.2,.8,.2,1);
+}
+.xa-vsl__player:hover{transform:translateY(-4px);box-shadow:0 0 0 1px rgba(212,175,55,.25),0 50px 100px -20px rgba(0,0,0,.7),0 0 120px -20px rgba(212,175,55,.35)}
+.xa-vsl__player::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%,rgba(212,175,55,.12),transparent 70%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0px,rgba(255,255,255,.02) 1px,transparent 1px,transparent 4px);
+}
+.xa-vsl__badge{
+  position:absolute;top:24px;left:24px;z-index:3;
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--xa-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--xa-gold);background:rgba(6,11,23,.7);backdrop-filter:blur(12px);
+  padding:8px 14px;border-radius:999px;border:1px solid var(--xa-line-2);
+}
+.xa-vsl__badge::before{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--xa-magenta);
+  box-shadow:0 0 12px var(--xa-magenta);animation:xa-blink 1.6s infinite;
+}
+@keyframes xa-blink{0%,100%{opacity:1}50%{opacity:.3}}
+.xa-vsl__play{
+  position:absolute;top:50%;left:50%;z-index:3;transform:translate(-50%,-50%);
+  width:88px;height:88px;border-radius:50%;
+  background:linear-gradient(135deg,var(--xa-gold-bright),var(--xa-gold));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 1px rgba(212,175,55,.3),0 20px 60px rgba(212,175,55,.4),0 0 0 0 rgba(212,175,55,.5);
+  animation:xa-ring 2.5s ease-out infinite;
+}
+@keyframes xa-ring{
+  0%{box-shadow:0 0 0 1px rgba(212,175,55,.3),0 20px 60px rgba(212,175,55,.4),0 0 0 0 rgba(212,175,55,.5)}
+  100%{box-shadow:0 0 0 1px rgba(212,175,55,.3),0 20px 60px rgba(212,175,55,.4),0 0 0 40px rgba(212,175,55,0)}
+}
+.xa-vsl__play svg{width:32px;height:32px;color:var(--xa-deep);margin-left:4px}
+.xa-vsl__caption{
+  position:absolute;bottom:24px;left:24px;z-index:3;
+  font-family:var(--xa-mono);font-size:11px;color:var(--xa-ink-dim);letter-spacing:.12em;text-transform:uppercase;
+}
+
+/* ── MENTORÍA / Sesión 0 ─────────────────────────────────── */
+.xa-mentoria-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;
+  border:1px solid var(--xa-line-2);padding:64px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(11,20,38,.7),rgba(6,11,23,.4));
+  position:relative;overflow:hidden;
+}
+.xa-mentoria-grid::before{
+  content:"";position:absolute;top:-50px;right:-50px;width:380px;height:380px;
+  background:radial-gradient(circle,rgba(212,175,55,.14),transparent 70%);
+  pointer-events:none;
+}
+.xa-date-block{font-family:var(--xa-display);text-align:left;border-left:2px solid var(--xa-gold);padding-left:24px;position:relative;z-index:1}
+.xa-date-block .day{font-family:var(--xa-mono);font-size:13px;color:var(--xa-gold);text-transform:uppercase;letter-spacing:.18em;margin-bottom:8px;font-weight:500}
+.xa-date-block .num{font-size:clamp(72px,10vw,112px);line-height:.85;font-weight:300;color:var(--xa-ink);letter-spacing:-.04em;font-variation-settings:"opsz" 144}
+.xa-date-block .month{font-size:26px;color:var(--xa-ink-soft);font-style:italic;margin-top:6px;font-weight:300}
+.xa-date-block .time{font-family:var(--xa-mono);font-size:13px;color:var(--xa-ink-soft);margin-top:20px;letter-spacing:.06em}
+.xa-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--xa-mono);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;padding:6px 14px;border-radius:999px;
+  background:var(--xa-gold-soft);color:var(--xa-gold);margin-bottom:20px;font-weight:500;
+}
+.xa-pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--xa-gold);box-shadow:0 0 10px var(--xa-gold);animation:xa-blink 2s infinite}
+
+/* ── STACK ──────────────────────────────────────────────── */
+.xa-stack-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;gap:32px;flex-wrap:wrap}
+.xa-stack-head .xa-h2{margin:0;max-width:18ch}
+.xa-stack-head p{max-width:38ch;color:var(--xa-ink-soft);font-size:16px;margin:0}
+.xa-stack-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--xa-line);border:1px solid var(--xa-line);border-radius:8px;overflow:hidden}
+.xa-stack-card{background:var(--xa-deep);padding:32px 24px;position:relative;transition:background .35s ease;min-height:240px;display:flex;flex-direction:column;justify-content:space-between}
+.xa-stack-card:hover{background:var(--xa-night)}
+.xa-stack-card .num{font-family:var(--xa-mono);font-size:11px;color:var(--xa-ink-low);letter-spacing:.18em;margin-bottom:32px}
+.xa-stack-card .name{font-family:var(--xa-display);font-size:28px;color:var(--xa-ink);font-weight:500;letter-spacing:-.01em;margin-bottom:8px}
+.xa-stack-card .role{font-family:var(--xa-mono);font-size:11px;color:var(--xa-gold);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;font-weight:500}
+.xa-stack-card .desc{font-size:13px;color:var(--xa-ink-soft);line-height:1.55}
+
+/* ── PROGRAMA / 8 sesiones ──────────────────────────────── */
+.xa-prog-meta{font-family:var(--xa-mono);font-size:12px;color:var(--xa-gold);letter-spacing:.16em;margin-bottom:14px;text-transform:uppercase}
+.xa-prog-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:48px}
+.xa-prog-card{
+  border:1px solid var(--xa-line);padding:32px;border-radius:8px;
+  background:var(--xa-night);position:relative;
+  transition:border-color .3s ease,transform .3s ease,box-shadow .3s ease;
+}
+.xa-prog-card:hover{border-color:var(--xa-gold);transform:translateY(-2px);box-shadow:0 12px 40px rgba(212,175,55,.1)}
+.xa-prog-card .head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid var(--xa-line);padding-bottom:12px}
+.xa-prog-card .ses{font-family:var(--xa-mono);font-size:11px;color:var(--xa-gold);letter-spacing:.16em;text-transform:uppercase;font-weight:500}
+.xa-prog-card .when{font-family:var(--xa-mono);font-size:11px;color:var(--xa-ink-low);letter-spacing:.06em}
+.xa-prog-card h4{font-family:var(--xa-display);font-size:22px;font-weight:500;margin:0 0 10px;color:var(--xa-ink);letter-spacing:-.005em}
+.xa-prog-card p{font-size:14px;color:var(--xa-ink-soft);margin:0;line-height:1.55}
+
+/* ── BONUS / COUNTDOWN ──────────────────────────────────── */
+.xa-bonus{text-align:center;background:linear-gradient(180deg,var(--xa-deep) 0%,var(--xa-night) 100%);padding:120px 0}
+.xa-bonus-inner{max-width:880px;margin:0 auto;border:1px solid var(--xa-gold);padding:64px 48px;position:relative;border-radius:8px;background:linear-gradient(180deg,rgba(212,175,55,.06),rgba(6,11,23,.6))}
+.xa-bonus-inner::before,.xa-bonus-inner::after{content:"";position:absolute;width:14px;height:14px;border:1px solid var(--xa-gold);background:var(--xa-deep)}
+.xa-bonus-inner::before{top:-7px;left:-7px}
+.xa-bonus-inner::after{bottom:-7px;right:-7px}
+.xa-countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:36px 0;font-family:var(--xa-mono)}
+.xa-countdown > div{background:var(--xa-deep);border:1px solid var(--xa-line-2);padding:20px 8px;border-radius:6px}
+.xa-countdown .n{font-family:var(--xa-display);font-size:clamp(42px,6vw,72px);color:var(--xa-gold);font-weight:300;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:block}
+.xa-countdown .l{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--xa-ink-low);margin-top:12px;display:block}
+.xa-bonus-msg{font-family:var(--xa-display);font-size:24px;font-style:italic;color:var(--xa-gold-bright);margin:32px 0;display:none}
+.xa-bonus.is-expired .xa-countdown,.xa-bonus.is-expired .xa-bonus-cta{display:none}
+.xa-bonus.is-expired .xa-bonus-msg{display:block}
+.xa-bonus-deadline{font-family:var(--xa-mono);font-size:12px;color:var(--xa-ink-soft);letter-spacing:.1em;margin-top:14px;text-transform:uppercase}
+
+/* ── PRECIO ─────────────────────────────────────────────── */
+.xa-price-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;margin-top:48px}
+.xa-price-card{border:1px solid var(--xa-line);padding:48px;border-radius:8px;background:var(--xa-night);position:relative;transition:transform .3s ease}
+.xa-price-card:hover{transform:translateY(-4px)}
+.xa-price-card.featured{border-color:var(--xa-gold);background:linear-gradient(180deg,rgba(212,175,55,.06),rgba(11,20,38,.5));box-shadow:0 0 40px rgba(212,175,55,.08)}
+.xa-price-card .tag{font-family:var(--xa-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--xa-gold);margin-bottom:24px;font-weight:500}
+.xa-price-card.featured .tag::before{content:"★ "}
+.xa-price-card h3{font-family:var(--xa-display);font-size:32px;font-weight:500;margin:0 0 8px;color:var(--xa-ink);letter-spacing:-.01em}
+.xa-price-card .sub{font-size:14px;color:var(--xa-ink-soft);margin-bottom:32px}
+.xa-price-card .amount{font-family:var(--xa-display);font-weight:300;color:var(--xa-gold-bright);font-size:84px;line-height:1;letter-spacing:-.03em;font-variation-settings:"opsz" 144}
+.xa-price-card .amount sup{font-size:24px;color:var(--xa-ink-soft);font-weight:400;vertical-align:super;margin-right:6px}
+.xa-price-card .avail{font-family:var(--xa-mono);font-size:12px;color:var(--xa-ink-dim);letter-spacing:.08em;margin-top:8px;margin-bottom:32px}
+.xa-price-card ul{list-style:none;padding:0;margin:0 0 32px}
+.xa-price-card li{font-size:14px;color:var(--xa-ink);padding:10px 0;border-bottom:1px solid var(--xa-line);display:flex;align-items:center;gap:12px}
+.xa-price-card li::before{content:"";width:14px;height:1px;background:var(--xa-gold);flex-shrink:0}
+.xa-price-card li:last-child{border-bottom:none}
+
+/* ── CTA FINAL ──────────────────────────────────────────── */
+.xa-cta{text-align:center;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(212,175,55,.1),transparent 70%);padding:140px 0}
+.xa-cta .xa-h2{margin:0 auto 24px;max-width:18ch}
+.xa-cta-meta{font-family:var(--xa-mono);font-size:13px;color:var(--xa-ink-soft);letter-spacing:.06em;margin-top:24px}
+.xa-cta-meta b{color:var(--xa-gold-bright);font-weight:500}
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+.xa-footer{border-top:1px solid var(--xa-line);padding:80px 0 40px;background:var(--xa-deep);position:relative}
+.xa-footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.xa-footer-brand .logo-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.xa-footer-brand .logo-row img{width:32px;height:32px;object-fit:contain}
+.xa-footer-brand .logo-row .name{font-family:var(--xa-display);font-size:22px;font-weight:500;color:var(--xa-ink);letter-spacing:-.01em}
+.xa-footer-brand .logo-row .name span{color:var(--xa-gold);font-style:italic;font-weight:300}
+.xa-footer-brand p{font-size:13px;color:var(--xa-ink-soft);max-width:34ch;line-height:1.6;margin:0 0 18px}
+.xa-footer-brand a.mail{font-family:var(--xa-mono);font-size:13px;color:var(--xa-gold);border-bottom:1px solid var(--xa-line-2);padding-bottom:2px;letter-spacing:.02em;display:inline-block;transition:color .2s}
+.xa-footer-brand a.mail:hover{color:var(--xa-gold-bright)}
+.xa-footer h5{font-family:var(--xa-mono);font-size:11px;color:var(--xa-gold);letter-spacing:.18em;text-transform:uppercase;margin:0 0 18px;font-weight:500}
+.xa-footer ul{list-style:none;padding:0;margin:0}
+.xa-footer ul li{margin-bottom:10px}
+.xa-footer ul a{font-size:13px;color:var(--xa-ink-soft);transition:color .2s}
+.xa-footer ul a:hover{color:var(--xa-gold)}
+.xa-footer-bottom{border-top:1px solid var(--xa-line);padding-top:32px;display:flex;justify-content:space-between;align-items:center;font-family:var(--xa-mono);font-size:11px;color:var(--xa-ink-low);letter-spacing:.08em;flex-wrap:wrap;gap:16px}
+
+/* ── STICKY MOBILE CTA (boost de conversión) ───────────── */
+.xa-sticky-cta{
+  position:fixed;left:0;right:0;bottom:0;z-index:90;
+  display:none;padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(6,11,23,.85),rgba(6,11,23,.98));
+  backdrop-filter:blur(14px);border-top:1px solid var(--xa-line-2);
+  transform:translateY(110%);transition:transform .45s cubic-bezier(.2,.8,.2,1);
+}
+.xa-sticky-cta.is-on{transform:none}
+.xa-sticky-cta a{display:flex;align-items:center;justify-content:center;width:100%;padding:14px 18px;border-radius:999px;font-weight:600;font-size:14px;background:linear-gradient(135deg,var(--xa-gold-bright),var(--xa-gold));color:var(--xa-deep)}
+@media(max-width:760px){.xa-sticky-cta{display:block}}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:980px){
+  .xa-section{padding:80px 0}
+  .xa-hero{padding:100px 24px 60px;min-height:auto}
+  .xa-mentoria-grid{grid-template-columns:1fr;gap:40px;padding:40px}
+  .xa-stack-grid{grid-template-columns:repeat(2,1fr)}
+  .xa-prog-grid{grid-template-columns:1fr}
+  .xa-price-grid{grid-template-columns:1fr}
+  .xa-footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .xa-vsl{padding:60px 0 80px}
+  .xa-bonus,.xa-cta{padding:80px 0}
+}
+@media(max-width:560px){
+  .xa-section{padding:64px 0}
+  .xa-wrap{padding:0 20px}
+  .xa-stack-grid{grid-template-columns:1fr}
+  .xa-bonus-inner{padding:40px 24px}
+  .xa-countdown > div{padding:14px 4px}
+  .xa-price-card{padding:32px 24px}
+  .xa-price-card .amount{font-size:64px}
+  .xa-mentoria-grid{padding:32px 24px}
+  .xa-footer-grid{grid-template-columns:1fr;gap:32px}
+  .xa-footer-bottom{flex-direction:column;align-items:flex-start;text-align:left}
+  .xa-btn{width:100%;justify-content:center}
+  .xa-hero__cta-row{width:100%;flex-direction:column}
+  .xa-hero__meta{gap:24px}
+  .xa-vsl__play{width:64px;height:64px}
+  .xa-vsl__play svg{width:24px;height:24px}
+  .xa-cta{padding-bottom:140px}
+  .xa-footer{padding-bottom:120px}
+}
+@media(prefers-reduced-motion:reduce){
+  .xa *,.xa *::before,.xa *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+
+<a href="#xa-main" class="xa-skip">Saltar al contenido</a>
+
+<div class="xa">
+  <div class="xa-cursor" aria-hidden="true"></div>
+
+  <!-- ═════════════ NAV ═════════════ -->
+  <nav class="xa-nav" aria-label="Navegación principal">
+    <div class="xa-nav__inner">
+      <a href="/" class="xa-nav__brand" aria-label="Xamox Academy — Inicio">
+        <img src="https://cdn.prod.website-files.com/69e4bb201906d98ef968b09b/69f5ec5f70b2617c1524c29a_Logo%20Xamox%20Academy.webp" alt="" class="xa-nav__brand-logo">
+        <span class="xa-nav__brand-text">Xamox <span>Academy</span></span>
+      </a>
+      <a href="https://campus.xamoxacademy.com/mentoria" class="xa-nav__cta" data-track="cta_nav_reservar" data-fb-event="Lead">Reservar plaza</a>
+    </div>
+  </nav>
+
+  <main id="xa-main">
+
+  <!-- ═════════════ HERO ═════════════ -->
+  <section class="xa-hero" aria-label="Inicio Xamox Academy">
+    <div class="xa-grid-bg" aria-hidden="true"></div>
+    <div class="xa-particles" aria-hidden="true"></div>
+    <div class="xa-hero__inner">
+      <div class="xa-hero__logo-wrap" data-parallax="0.15">
+        <span class="xa-hero__halo" aria-hidden="true"></span>
+        <img src="https://cdn.prod.website-files.com/69e4bb201906d98ef968b09b/69f5ec5f70b2617c1524c29a_Logo%20Xamox%20Academy.webp" alt="Xamox Academy" class="xa-hero__logo-img" fetchpriority="high">
+      </div>
+      <div class="xa-eyebrow center">Edición 01 · Junio 2026</div>
+      <h1 class="xa-h1 xa-hero__title">Tu primera app, <em>viva en internet.</em></h1>
+      <p class="xa-lede center xa-hero__lede">En un mes. Con IA. Sin un máster.<br>Métodos prácticos para crear el futuro digital.</p>
+      <div class="xa-hero__cta-block">
+        <div class="xa-hero__cta-row">
+          <a href="https://campus.xamoxacademy.com/mentoria" class="xa-btn xa-btn--gold" data-magnetic data-track="cta_hero_mentoria" data-fb-event="Lead">
+            Empezar el 1 de junio
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#vsl" class="xa-btn xa-btn--ghost" data-track="cta_hero_vsl">Ver cómo funciona</a>
+        </div>
+        <p class="xa-hero__cta-meta">Antes de empezar: <b>mentoría gratuita el 24 de mayo · 19:00h</b></p>
+      </div>
+      <div class="xa-hero__meta">
+        <div class="xa-hero__meta-item"><strong data-count="8">0</strong> sesiones en vivo</div>
+        <div class="xa-hero__meta-item"><strong data-count="4">0</strong> semanas</div>
+        <div class="xa-hero__meta-item"><strong data-count="100">0</strong> plazas</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════ VSL ═════════════ -->
+  <section class="xa-vsl" id="vsl" aria-label="Vídeo demostrativo del método">
+    <div class="xa-wrap">
+      <div class="xa-vsl__head xa-rv">
+        <div class="xa-eyebrow center">Mira cómo funciona</div>
+        <h2 class="xa-h2">Un método. <em>Ochenta segundos.</em></h2>
+        <p class="xa-lede center">Te enseño en pantalla cómo construimos productos reales con el stack Xamox. Sin teoría — directo al sistema.</p>
+      </div>
+      <div class="xa-vsl__player xa-rv" id="xa-vsl-player" role="button" tabindex="0" aria-label="Reproducir vídeo demostrativo">
+        <!-- ZONA VSL: David, sustituye este bloque por el embed real cuando tengas el video.
+             Mantén las clases xa-vsl__badge, xa-vsl__play y xa-vsl__caption fuera del iframe. -->
+        <span class="xa-vsl__badge">En directo · Demo</span>
+        <div class="xa-vsl__play" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="xa-vsl__caption">01:20 · sin sonido necesario</span>
+        <!-- [VSL_EMBED] -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════ MENTORÍA ═════════════ -->
+  <section class="xa-section" id="mentoria" aria-label="Mentoría gratuita 24 de mayo">
+    <div class="xa-wrap">
+      <div class="xa-mentoria-grid xa-rv">
+        <div class="xa-date-block">
+          <div class="day">Domingo</div>
+          <div class="num">24</div>
+          <div class="month">mayo</div>
+          <div class="time">19:00h · hora España (CEST)</div>
+        </div>
+        <div>
+          <span class="xa-pill">Mentoría abierta · Plazas limitadas</span>
+          <h2 class="xa-h2">Una hora <em>en directo</em> antes de empezar. Sin grabación.</h2>
+          <p class="xa-lede">Te enseño en pantalla cómo trabajamos en Xamox: del prompt al producto desplegado. Resuelvo tus dudas y te confirmo si la edición 01 encaja contigo.</p>
+          <a href="https://campus.xamoxacademy.com/mentoria" class="xa-btn xa-btn--gold" data-magnetic data-track="cta_mentoria_reservar" data-fb-event="Lead">
+            Reservar mi plaza GRATIS
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <p class="xa-hero__cta-meta" style="margin-top:14px">100% online · Sin spam · Te llega por email</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════ STACK ═════════════ -->
+  <section class="xa-section" aria-label="Stack tecnológico Xamox">
+    <div class="xa-wrap">
+      <div class="xa-stack-head xa-rv">
+        <div>
+          <div class="xa-eyebrow">El método · Stack Xamox</div>
+          <h2 class="xa-h2">Cinco herramientas. Un <em>sistema</em>.</h2>
+        </div>
+        <p>No te enseñamos herramientas sueltas — te enseñamos a orquestarlas. Este es el flujo que usamos cada día para entregar producto real.</p>
+      </div>
+      <div class="xa-stack-grid xa-rv">
+        <div class="xa-stack-card"><div><div class="num">01</div><div class="name">Claude</div><div class="role">Pensar / decidir</div></div><div class="desc">Tu copiloto de arquitectura, copy y estrategia. El cerebro del stack.</div></div>
+        <div class="xa-stack-card"><div><div class="num">02</div><div class="name">Cursor</div><div class="role">Construir / editar</div></div><div class="desc">Editor con IA integrada. Escribes en lenguaje natural y sale código real.</div></div>
+        <div class="xa-stack-card"><div><div class="num">03</div><div class="name">GitHub</div><div class="role">Versionar / compartir</div></div><div class="desc">Tu memoria del proyecto. Cada cambio guardado, revertible y colaborativo.</div></div>
+        <div class="xa-stack-card"><div><div class="num">04</div><div class="name">Render</div><div class="role">Desplegar / servir</div></div><div class="desc">Tu backend en producción en minutos. Sin DevOps, con dominios reales.</div></div>
+        <div class="xa-stack-card"><div><div class="num">05</div><div class="name">Webflow</div><div class="role">Diseñar / publicar</div></div><div class="desc">El frontend con CMS y SEO. Lo que ven tus clientes — pixel-perfect.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════ PROGRAMA ═════════════ -->
+  <section class="xa-section" id="programa" aria-label="Programa de las 8 sesiones">
+    <div class="xa-wrap">
+      <div class="xa-rv">
+        <div class="xa-eyebrow">Programa · 8 sesiones</div>
+        <h2 class="xa-h2">Empezamos el <em>1 de junio</em>.</h2>
+        <p class="xa-lede">Ocho sesiones temáticas e independientes. Lunes y miércoles, 18:00–21:00. Cada sesión es una pieza del puzzle: al terminar, tienes un producto real desplegado.</p>
+        <p class="xa-prog-meta">Lun · Mié · 18:00–21:00 · 4 semanas · Online en directo</p>
+      </div>
+      <div class="xa-prog-grid xa-rv">
+        <div class="xa-prog-card"><div class="head"><span class="ses">Sesión 01</span><span class="when">Lun · 1 jun</span></div><h4>Pensar antes de construir</h4><p>Define tu producto en una página. Briefing con Claude, validación de hipótesis y arquitectura mínima viable.</p></div>
+        <div class="xa-prog-card"><div class="head"><span class="ses">Sesión 02</span><span class="when">Mié · 3 jun</span></div><h4>Identidad y diseño</h4><p>Sistema visual coherente: tipografía, paleta y componentes. Del concepto al primer mockup en Webflow.</p></div>
+        <div class="xa-prog-card"><div class="head"><span class="ses">Sesión 03</span><span class="when">Lun · 8 jun</span></div><h4>Frontend con Webflow</h4><p>Estructura, CMS, animaciones y SEO técnico. Tu landing pública el mismo día.</p></div>
+        <div class="xa-prog-card"><div class="head"><span class="ses">Sesión 04</span><span class="when">Mié · 10 jun</span></div><h4>De Webflow a código</h4><p>Cuándo saltar a Cursor + GitHub. Componentes custom, embeds inteligentes y control real.</p></div>
+        <div class="xa-prog-card"><div class="head"><span class="ses">Sesión 05</span><span class="when">Lun · 15 jun</span></div><h4>Backend mínimo en Render</h4><p>API propia desplegada. Formularios, automatizaciones y el primer endpoint en producción.</p></div>
+        <div class="xa-prog-card"><div class="head"><span class="ses">Sesión 06</span><span class="when">Mié · 17 jun</span></div><h4>IA en tu producto</h4><p>Integra Claude API en tu app. Casos prácticos: asistentes, generación y análisis con datos reales.</p></div>
+        <div class="xa-prog-card"><div class="head"><span class="ses">Sesión 07</span><span class="when">Lun · 22 jun</span></div><h4>Pago, métricas y go-to-market</h4><p>Stripe, píxeles, analítica que importa y el primer plan de captación que cabe en una hoja.</p></div>
+        <div class="xa-prog-card"><div class="head"><span class="ses">Sesión 08</span><span class="when">Mié · 24 jun</span></div><h4>Demo Day</h4><p>Cada alumno presenta su producto real desplegado. Feedback en directo y plan de los siguientes 30 días.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════ BONUS / COUNTDOWN ═════════════ -->
+  <section class="xa-bonus" id="xa-bonus" data-deadline="2026-05-27T23:59:00+02:00" aria-label="Bonus por reserva temprana">
+    <div class="xa-wrap">
+      <div class="xa-bonus-inner xa-rv">
+        <div class="xa-eyebrow center">Regalo · Apúntate antes del cierre</div>
+        <h2 class="xa-h2">Si reservas antes del <em>27 de mayo</em>...</h2>
+        <p class="xa-lede center">Te llevas las grabaciones de las ediciones anteriores de Xamox como bonus. Acceso permanente. Solo para quienes entren al directo.</p>
+        <div class="xa-countdown" id="xa-countdown" aria-label="Cuenta atrás hasta el 27 de mayo">
+          <div><span class="n" data-d>--</span><span class="l">Días</span></div>
+          <div><span class="n" data-h>--</span><span class="l">Horas</span></div>
+          <div><span class="n" data-m>--</span><span class="l">Min</span></div>
+          <div><span class="n" data-s>--</span><span class="l">Seg</span></div>
+        </div>
+        <div class="xa-bonus-msg" role="status">El periodo de regalo ha terminado.</div>
+        <a href="https://campus.xamoxacademy.com/comprar" class="xa-btn xa-btn--gold xa-bonus-cta" data-magnetic data-track="cta_bonus_comprar" data-fb-event="InitiateCheckout">
+          Quiero mi plaza con el regalo
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <p class="xa-bonus-deadline">Cierre · Miércoles 27 de mayo · 23:59 (España)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════ PRECIO ═════════════ -->
+  <section class="xa-section" id="precio" aria-label="Inversión Edición 01">
+    <div class="xa-wrap">
+      <div class="xa-rv">
+        <div class="xa-eyebrow">Inversión · Edición 01</div>
+        <h2 class="xa-h2">Dos formas de <em>entrar</em>.</h2>
+        <p class="xa-lede">El directo es donde ocurre la transformación real. Las grabaciones existen para quien no puede en este calendario.</p>
+      </div>
+      <div class="xa-price-grid xa-rv">
+        <div class="xa-price-card featured">
+          <div class="tag">Edición 01 · En directo</div>
+          <h3>Live + comunidad</h3>
+          <p class="sub">8 sesiones en directo · Mentoría · Demo Day</p>
+          <div class="amount"><sup>€</sup>149</div>
+          <div class="avail">Inicio · 1 junio 2026 · 100 plazas</div>
+          <ul>
+            <li>8 sesiones live (Lun · Mié · 18-21h)</li>
+            <li>Acceso a la comunidad privada</li>
+            <li>Feedback en directo en el Demo Day</li>
+            <li>Plantillas y código del stack Xamox</li>
+            <li>Grabaciones de tu edición incluidas</li>
+            <li>Acceso inmediato al Portal de Alumnos</li>
+          </ul>
+          <a href="https://campus.xamoxacademy.com/comprar" class="xa-btn xa-btn--gold" data-magnetic data-track="cta_precio_comprar" data-fb-event="InitiateCheckout">
+            Reservar mi plaza
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+        <div class="xa-price-card">
+          <div class="tag">Solo grabaciones</div>
+          <h3>Recordings</h3>
+          <p class="sub">A tu ritmo · Sin live · Sin comunidad</p>
+          <div class="amount"><sup>€</sup>49</div>
+          <div class="avail">Disponible · 30 junio 2026</div>
+          <ul>
+            <li>Las 8 sesiones grabadas en HD</li>
+            <li>Recursos y material descargable</li>
+            <li>Acceso permanente</li>
+            <li>Sin sesiones en directo</li>
+            <li>Sin acceso a la comunidad</li>
+          </ul>
+          <a href="https://campus.xamoxacademy.com/mentoria" class="xa-btn xa-btn--ghost" data-track="cta_precio_recordings">Avísame cuando esté disponible</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════ CTA FINAL ═════════════ -->
+  <section class="xa-cta" aria-label="Reserva tu plaza">
+    <div class="xa-wrap xa-rv">
+      <div class="xa-eyebrow center">Lanzamiento 01</div>
+      <h2 class="xa-h2">Empieza con la mentoría gratis. Decide después.</h2>
+      <p class="xa-lede center">El 24 de mayo te muestro el sistema en directo. Si encaja, entras a la edición. Si no, te llevas valor real igualmente.</p>
+      <a href="https://campus.xamoxacademy.com/mentoria" class="xa-btn xa-btn--gold" data-magnetic data-track="cta_final_mentoria" data-fb-event="Lead">
+        Reservar mi plaza
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <p class="xa-cta-meta">Antes del <b>27 de mayo</b> · Empieza el <b>1 de junio</b> · <b>100 plazas</b></p>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- ═════════════ FOOTER ═════════════ -->
+  <footer class="xa-footer" aria-label="Pie de página">
+    <div class="xa-wrap">
+      <div class="xa-footer-grid">
+        <div class="xa-footer-brand">
+          <div class="logo-row">
+            <img src="https://cdn.prod.website-files.com/69e4bb201906d98ef968b09b/69f5ec5f70b2617c1524c29a_Logo%20Xamox%20Academy.webp" alt="" loading="lazy">
+            <span class="name">Xamox <span>Academy</span></span>
+          </div>
+          <p>Academia de formación técnica avanzada en IA y desarrollo web. Una iniciativa de <a href="https://www.ktysdavids.com" target="_blank" rel="noopener" style="color:var(--xa-gold);border-bottom:1px solid var(--xa-line-2)">Ktys &amp; Davids Productions SL</a>.</p>
+          <a href="mailto:info@xamoxacademy.com" class="mail">info@xamoxacademy.com</a>
+        </div>
+        <div>
+          <h5>Acceso</h5>
+          <ul>
+            <li><a href="#mentoria">Mentoría 24 mayo</a></li>
+            <li><a href="https://campus.xamoxacademy.com/mentoria" data-track="footer_mentoria">Inscripción mentoría →</a></li>
+            <li><a href="https://campus.xamoxacademy.com/dashboard" data-track="footer_portal">Portal de alumnos →</a></li>
+            <li><a href="https://campus.xamoxacademy.com/comprar" data-track="footer_comprar">Comprar plaza</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5>Grupo</h5>
+          <ul>
+            <li><a href="https://www.ktysdavids.com" target="_blank" rel="noopener">Ktys &amp; Davids</a></li>
+            <li><a href="https://xamoxdigitalservices.com" target="_blank" rel="noopener">Xamox Digital Services</a></li>
+            <li><a href="#vsl">Cómo funciona</a></li>
+            <li><a href="mailto:info@xamoxacademy.com">Contacto</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="/aviso-legal">Aviso legal</a></li>
+            <li><a href="/privacidad">Privacidad</a></li>
+            <li><a href="/cookies">Cookies</a></li>
+            <li><a href="/condiciones">Condiciones</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="xa-footer-bottom">
+        <span>© 2026 Ktys &amp; Davids Productions SL · Sevilla, España</span>
+        <span>Construido con el stack Xamox</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═════════════ STICKY CTA MOBILE ═════════════ -->
+  <div class="xa-sticky-cta" id="xa-sticky-cta" aria-hidden="true">
+    <a href="https://campus.xamoxacademy.com/mentoria" data-track="cta_sticky_mentoria" data-fb-event="Lead">
+      Reservar mentoría gratis · 24 mayo
+    </a>
+  </div>
+
+</div>
+
+<!-- ═════════════ JSON-LD SCHEMA (rich snippets en Google) ═════════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.xamoxacademy.com/#org",
+      "name": "Xamox Academy",
+      "url": "https://www.xamoxacademy.com",
+      "logo": "https://cdn.prod.website-files.com/69e4bb201906d98ef968b09b/69f86c7786acb6eea1bc8521_logo-512x512.png",
+      "email": "info@xamoxacademy.com",
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "Ktys & Davids Productions SL",
+        "url": "https://www.ktysdavids.com"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "ES",
+        "addressRegion": "Andalucía",
+        "addressLocality": "Sevilla"
+      }
+    },
+    {
+      "@type": "Course",
+      "name": "Xamox Academy · Edición 01 — Live + comunidad",
+      "description": "Programa práctico de 8 sesiones en directo para construir y desplegar tu primera app real con IA. Lunes y miércoles, 18:00–21:00, durante 4 semanas.",
+      "provider": { "@id": "https://www.xamoxacademy.com/#org" },
+      "url": "https://www.xamoxacademy.com",
+      "inLanguage": "es",
+      "educationalLevel": "Beginner",
+      "offers": {
+        "@type": "Offer",
+        "price": "149",
+        "priceCurrency": "EUR",
+        "availability": "https://schema.org/InStock",
+        "url": "https://campus.xamoxacademy.com/comprar",
+        "validFrom": "2026-04-01",
+        "category": "Online course"
+      },
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "Online",
+        "startDate": "2026-06-01T18:00:00+02:00",
+        "endDate": "2026-06-24T21:00:00+02:00",
+        "courseSchedule": {
+          "@type": "Schedule",
+          "byDay": ["Monday", "Wednesday"],
+          "startTime": "18:00",
+          "endTime": "21:00",
+          "scheduleTimezone": "Europe/Madrid"
+        }
+      }
+    },
+    {
+      "@type": "Event",
+      "name": "Mentoría gratuita · Xamox Academy",
+      "description": "Sesión abierta en directo para conocer el método Xamox antes de la Edición 01. Sin grabación, plazas limitadas.",
+      "startDate": "2026-05-24T19:00:00+02:00",
+      "endDate": "2026-05-24T20:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+      "location": {
+        "@type": "VirtualLocation",
+        "url": "https://campus.xamoxacademy.com/mentoria"
+      },
+      "organizer": { "@id": "https://www.xamoxacademy.com/#org" },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR",
+        "availability": "https://schema.org/InStock",
+        "url": "https://campus.xamoxacademy.com/mentoria",
+        "validFrom": "2026-04-01"
+      },
+      "image": "https://cdn.prod.website-files.com/69e4bb201906d98ef968b09b/69f86c7786acb6eea1bc8521_logo-512x512.png"
+    }
+  ]
+}
+</script>
+
+<script>
+(function(){
+  var root = document.querySelector('.xa');
+  if(!root) return;
+
+  /* ── HALO CURSOR ──────────────────────────────────── */
+  var halo = root.querySelector('.xa-cursor');
+  var mx = window.innerWidth/2, my = window.innerHeight/2;
+  var hx = mx, hy = my;
+  function moveHalo(e){ var p = e.touches ? e.touches[0] : e; mx = p.clientX; my = p.clientY; }
+  function loopHalo(){
+    hx += (mx - hx) * 0.12; hy += (my - hy) * 0.12;
+    if(halo) halo.style.transform = 'translate(' + hx + 'px,' + hy + 'px) translate(-50%,-50%)';
+    requestAnimationFrame(loopHalo);
+  }
+  window.addEventListener('mousemove', moveHalo, {passive:true});
+  loopHalo();
+  setTimeout(function(){ root.classList.add('is-ready'); }, 200);
+
+  /* ── PARTICLES ────────────────────────────────────── */
+  var particles = root.querySelector('.xa-particles');
+  if(particles){
+    for(var i=0; i<22; i++){
+      var s = document.createElement('span');
+      s.style.left = (Math.random()*100) + '%';
+      s.style.animationDelay = (Math.random()*18) + 's';
+      s.style.animationDuration = (14 + Math.random()*10) + 's';
+      s.style.opacity = String(0.3 + Math.random()*0.4);
+      particles.appendChild(s);
+    }
+  }
+
+  /* ── REVEAL ON SCROLL ─────────────────────────────── */
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+    root.querySelectorAll('.xa-rv').forEach(function(el){ io.observe(el); });
+  } else {
+    root.querySelectorAll('.xa-rv').forEach(function(el){ el.classList.add('is-in'); });
+  }
+
+  /* ── COUNTERS ─────────────────────────────────────── */
+  var counted = false;
+  function runCounters(){
+    if(counted) return; counted = true;
+    root.querySelectorAll('[data-count]').forEach(function(el){
+      var target = parseInt(el.getAttribute('data-count'),10);
+      var dur = 1400, start = performance.now();
+      function step(t){
+        var p = Math.min((t-start)/dur, 1);
+        var eased = 1 - Math.pow(1-p, 3);
+        el.textContent = Math.floor(eased * target);
+        if(p < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  setTimeout(runCounters, 1100);
+
+  /* ── MAGNETIC BUTTONS (solo desktop) ──────────────── */
+  if(window.matchMedia('(hover:hover)').matches){
+    root.querySelectorAll('[data-magnetic]').forEach(function(btn){
+      btn.addEventListener('mousemove', function(e){
+        var r = btn.getBoundingClientRect();
+        var x = e.clientX - r.left - r.width/2;
+        var y = e.clientY - r.top - r.height/2;
+        btn.style.transform = 'translate(' + (x*0.18) + 'px,' + (y*0.22) + 'px)';
+      });
+      btn.addEventListener('mouseleave', function(){ btn.style.transform = ''; });
+    });
+  }
+
+  /* ── PARALLAX ─────────────────────────────────────── */
+  var pEls = root.querySelectorAll('[data-parallax]');
+  function parallax(){
+    var y = window.pageYOffset || 0;
+    pEls.forEach(function(el){
+      var rate = parseFloat(el.getAttribute('data-parallax')) || 0.1;
+      el.style.transform = 'translateY(' + (y * rate * -1) + 'px)';
+    });
+  }
+  window.addEventListener('scroll', parallax, {passive:true});
+
+  /* ── SMOOTH SCROLL ────────────────────────────────── */
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href');
+      if(id.length > 1){
+        var t = document.querySelector(id);
+        if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth', block:'start'}); }
+      }
+    });
+  });
+
+  /* ── COUNTDOWN ────────────────────────────────────── */
+  var section = document.getElementById('xa-bonus');
+  if(section){
+    var deadline = new Date(section.getAttribute('data-deadline')).getTime();
+    var elD = section.querySelector('[data-d]'), elH = section.querySelector('[data-h]');
+    var elM = section.querySelector('[data-m]'), elS = section.querySelector('[data-s]');
+    function pad(n){ return n<10 ? '0'+n : ''+n; }
+    function tick(){
+      var diff = deadline - Date.now();
+      if(diff <= 0){
+        section.classList.add('is-expired');
+        elD.textContent='00'; elH.textContent='00'; elM.textContent='00'; elS.textContent='00';
+        clearInterval(timer); return;
+      }
+      elD.textContent = pad(Math.floor(diff/86400000));
+      elH.textContent = pad(Math.floor((diff%86400000)/3600000));
+      elM.textContent = pad(Math.floor((diff%3600000)/60000));
+      elS.textContent = pad(Math.floor((diff%60000)/1000));
+    }
+    tick();
+    var timer = setInterval(tick, 1000);
+  }
+
+  /* ── STICKY MOBILE CTA (aparece tras pasar el hero) ─ */
+  var sticky = document.getElementById('xa-sticky-cta');
+  if(sticky){
+    var hero = document.querySelector('.xa-hero');
+    function checkSticky(){
+      if(!hero) return;
+      var passed = (hero.getBoundingClientRect().bottom < 0);
+      sticky.classList.toggle('is-on', passed);
+      sticky.setAttribute('aria-hidden', passed ? 'false' : 'true');
+    }
+    window.addEventListener('scroll', checkSticky, {passive:true});
+    checkSticky();
+  }
+
+  /* ── TRACKING DE CONVERSIÓN ───────────────────────── */
+  /* Cada elemento [data-track] dispara: dataLayer + gtag + Meta Pixel.
+     Si no tienes alguna integración, el código simplemente lo salta. */
+  document.querySelectorAll('[data-track]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var name = el.getAttribute('data-track');
+      var fb = el.getAttribute('data-fb-event');
+
+      // Google Tag Manager / dataLayer
+      try { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: name }); } catch(e){}
+
+      // Google Analytics 4 directo (si está)
+      try { if(typeof window.gtag === 'function') window.gtag('event', name); } catch(e){}
+
+      // Meta Pixel — eventos estándar (Lead, InitiateCheckout, Purchase…)
+      try { if(fb && typeof window.fbq === 'function') window.fbq('track', fb); } catch(e){}
+    });
+  });
+})();
+</script>
